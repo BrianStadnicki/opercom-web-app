@@ -69,7 +69,8 @@ function switchChatView(chat, putInHistory) {
 }
 
 function renderChat(chat) {
-    document.getElementById('chat-view-box').innerHTML = `
+    let chatViewBox = document.getElementById('chat-view-box');
+    chatViewBox.innerHTML = `
         ${
             Object.values(groupByKey(JSON.parse(localStorage.getItem(chat))['messages'], 'conversationLink'))
                 .reverse()
@@ -88,5 +89,7 @@ function renderChat(chat) {
                 })
                 .join('')
         }
-        `;
+    `;
+    // auto-scroll div to bottom
+    chatViewBox.scrollTop = chatViewBox.scrollHeight;
 }
