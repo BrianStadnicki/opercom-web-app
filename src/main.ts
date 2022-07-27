@@ -80,8 +80,9 @@ function renderChat(chat) {
                         return ``
                     } else {
                         return `
-                        <div id="post-${post[0]['conversationLink']}">
-                            <p>${parent['imdisplayname']} : ${parent['composetime']}</p>
+                        <div id="post-${post[0]['conversationLink']}" class="border border-dark m-2 p-2">
+                            <p>${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}</p>
+                            <hr>
                             <p>${parent['content']}</p>
                         </div>
                         `
