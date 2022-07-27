@@ -72,6 +72,7 @@ function renderChat(chat) {
     document.getElementById('chat-view-box').innerHTML = `
         ${
             Object.values(groupByKey(JSON.parse(localStorage.getItem(chat))['messages'], 'conversationLink'))
+                .reverse()
                 .map(post => {
                     let parent = post["length"] > 1 ? post[post["length"] - 1] : post[0];
                     if (parent['messagetype'].startsWith('ThreadActivity/')) {
@@ -84,7 +85,6 @@ function renderChat(chat) {
                         </div>
                         `
                     }
-                    
                 })
                 .join('')
         }
