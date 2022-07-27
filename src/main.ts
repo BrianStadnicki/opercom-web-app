@@ -98,6 +98,8 @@ function renderChat(chat) {
                         <div id="post-${post[0]['conversationLink']}" class="border border-dark m-2 p-2">
                             <p>${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}</p>
                             <hr>
+                            ${parent['properties']['title'] !== undefined ? `<h3><b>${parent['properties']['title']}</b></h3>` : ''}
+                            ${parent['properties']['subject'] !== undefined ? `<h6><b>${parent['properties']['subject']}</b></h6>` : ''}
                             <p>${parent['content']}</p>
                         </div>
                         `
