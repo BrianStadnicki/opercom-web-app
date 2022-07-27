@@ -47,8 +47,23 @@ function createTeamsListItem(team) {
     return res;
 }
 
+let currentActiveChat = "";
 window["switchChatView"] = switchChatView;
+
 function switchChatView(chat, putInHistory) {
+    let channelInList = document.getElementById(`list-group-item-action-${cssValidID(chat)}`);
+    channelInList.classList.add('text-bg-primary');
+    if (currentActiveChat !== "") {
+        document.getElementById(`list-group-item-action-${cssValidID(currentActiveChat)}`).classList.remove('text-bg-primary');
+    }
+    currentActiveChat = chat;
+
+    let channelListBtn = channelInList.parentElement.previousElementSibling;
+    if (channelListBtn.getAttribute('aria-expanded') === 'false' || channelListBtn.getAttribute('aria-expanded') === null) {
+        (<HTMLElement>channelListBtn).click();
+        channelListBtn.scrollIntoView();
+    }
+
     if (putInHistory) {
         let url = new URL(window.location.href);
         url.searchParams.set('thread', chat);
