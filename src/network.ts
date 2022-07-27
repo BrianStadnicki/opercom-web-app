@@ -85,3 +85,20 @@ export async function networkGetConversation(thread, messages, startTime) {
     })
         .then(res => res.json());
 }
+
+/**
+ * Gets a image object
+ * @param object image object id
+ */
+export async function networkGetImgo(object) {
+    return await fetch(urlMode(`/assets/imgo.php?id=${object}&v=1`), {
+        "headers": {
+            "skype-token": localStorage.getItem("skype-token")
+        },
+        "method": "GET"
+    })
+        .then(res => res.body)
+        .then(res => res.getReader().read())
+        .then(res => res.value)
+        .then(res => btoa(String.fromCharCode.apply(null, new Uint8Array(res))));
+}
