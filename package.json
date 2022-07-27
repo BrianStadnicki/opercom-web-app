@@ -1,0 +1,15 @@
+{
+  "name": "web-app-v2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.6.2"
+  },
+  "scripts": {
+    "start": "yarn parcel src/index.html"
+  },
+  "source": "src/index.ts",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts"
+}
