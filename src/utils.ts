@@ -49,7 +49,7 @@ export function urlMode(url) {
  * @param id id
  */
 export function cssValidID(id) {
-    return id.replace(':', '-').replace('@', '-').replace('.', '');
+    return id.replaceAll(':', '-').replaceAll('@', '-').replaceAll('.', '-').replaceAll(';', '-').replaceAll('=', '-').replaceAll('/', '-');
 }
 
 /**
