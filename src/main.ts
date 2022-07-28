@@ -51,6 +51,8 @@ let currentActiveChat = "";
 window["switchChatView"] = switchChatView;
 
 function switchChatView(chat, putInHistory) {
+    document.getElementById('chat-view-box').innerHTML = "";
+
     let channelInList = document.getElementById(`list-group-item-action-${cssValidID(chat)}`);
     channelInList.classList.add('text-bg-primary');
     if (currentActiveChat !== "") {
