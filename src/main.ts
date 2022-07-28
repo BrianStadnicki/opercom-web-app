@@ -102,7 +102,13 @@ function renderChat(chat) {
                 content.querySelectorAll('img[itemtype="http://schema.skype.com/AMSImage"]').forEach(img => {
                     let object = (<HTMLImageElement>img).src.match(/(?<=\/objects\/)(.*)(?=\/views\/)/g).pop();
                     (<HTMLImageElement>img).src = "";
-                    (<HTMLImageElement>img).style.maxWidth = "100%";
+                    (<HTMLImageElement>img).style.maxWidth = "80%";
+                    (<HTMLImageElement>img).style.objectFit = "scale-down";
+                    (<HTMLImageElement>img).style.width = "";
+                    (<HTMLImageElement>img).style.height = "";
+                    (<HTMLImageElement>img).removeAttribute('height');
+                    (<HTMLImageElement>img).removeAttribute('width');
+
                     networkGetImgo(object).then(blob => {
                         (<HTMLImageElement>img).src = URL.createObjectURL(blob);
                     })
