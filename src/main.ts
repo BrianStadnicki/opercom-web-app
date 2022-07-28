@@ -124,6 +124,8 @@ function renderChat(chat) {
                 let postElement = document.createElement('div');
                 postElement.id = `post-${post[0]['conversationLink']}`;
                 postElement.classList.add('border', 'border-dark', 'm-2', 'p-2');
+                postElement.style.width = 'auto';
+                postElement.style.wordBreak = "break-all";
                 postElement.innerHTML = `
                     <p>${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}</p>
                     <hr>
