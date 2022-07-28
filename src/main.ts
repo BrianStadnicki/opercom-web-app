@@ -13,7 +13,6 @@ export async function hydrate() {
     networkGetUserProfilePicture(localStorage.getItem("user-id"), "HR64x64").then(blob => {
         selfProfilePicture.src = URL.createObjectURL(blob);
     })
-    selfProfilePicture.src = "data:image/jpg;base64," + localStorage.getItem("profile-picture");
     selfProfilePicture.title = localStorage.getItem("user-name");
 
     // fill list of teams and channels
