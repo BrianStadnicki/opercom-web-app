@@ -1,8 +1,7 @@
-import {networkGetTeamsList, networkGetUserProfilePicture, networkGetUserProperties} from "./network";
+import {networkGetTeamsList, networkGetUserProperties} from "./network";
 
 export async function init() {
     await getUserProperties(true);
-    await getProfilePicture(true);
     await getTeams(true);
 }
 
@@ -21,23 +20,6 @@ async function getUserProperties(checkExists) {
                 localStorage.setItem("user-id", res["user-id"]);
                 localStorage.setItem("user-name", res["user-name"])
                 localStorage.setItem("is-private-chat-enabled", res["is-private-chat-enabled"])
-
-                resolve();
-            });
-    });
-}
-
-async function getProfilePicture(checkExists) {
-    if (checkExists &&
-        localStorage.getItem("profile-picture") !== null) {
-
-        return;
-    }
-
-    return new Promise<void>(resolve => {
-        networkGetUserProfilePicture(localStorage.getItem("user-id"), "HR64x64")
-            .then(res => {
-                localStorage.setItem("profile-picture", res);
 
                 resolve();
             });

@@ -1,5 +1,5 @@
 import {cssValidID, groupByKey} from "./utils";
-import {networkGetConversation, networkGetImgo} from "./network";
+import {networkGetConversation, networkGetImgo, networkGetUserProfilePicture} from "./network";
 
 export async function hydrate() {
     // show main window
@@ -7,6 +7,9 @@ export async function hydrate() {
 
     // set self profile picture
     const selfProfilePicture = <HTMLImageElement>document.getElementById('profile-picture-self');
+    networkGetUserProfilePicture(localStorage.getItem("user-id"), "HR64x64").then(blob => {
+        selfProfilePicture.src = URL.createObjectURL(blob);
+    })
     selfProfilePicture.src = "data:image/jpg;base64," + localStorage.getItem("profile-picture");
     selfProfilePicture.title = localStorage.getItem("user-name");
 

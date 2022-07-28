@@ -47,14 +47,7 @@ export async function networkGetUserProfilePicture(user, size) {
         },
         "method": "GET"
     })
-        .then(res => {
-            console.log(res);
-            return res;
-        })
-        .then(res => res.body)
-        .then(res => res.getReader().read())
-        .then(res => res.value)
-        .then(res => btoa(String.fromCharCode.apply(null, new Uint8Array(res))));
+        .then(res => res.blob());
 }
 
 /**
