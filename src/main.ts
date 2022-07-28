@@ -120,19 +120,34 @@ function renderChat(chat) {
                     tag.classList.add("text-bg-primary", "badge");
                 });
 
+                let userFromProfilePicture = document.createElement('img');
+                userFromProfilePicture.width = 32;
+                userFromProfilePicture.height = 32;
+                userFromProfilePicture.classList.add("d-inline-block");
+                networkGetUserProfilePicture(parent['from'].match(/(?<=\/contacts\/)(.*)(?=)/g).pop(), "HR64x64").then(blob => {
+                    userFromProfilePicture.src = URL.createObjectURL(blob);
+                });
+
                 let postElement = document.createElement('div');
                 postElement.id = `post-${post[0]['conversationLink']}`;
                 postElement.classList.add('border', 'border-dark', 'm-2', 'p-2');
                 postElement.style.width = 'auto';
                 postElement.style.wordBreak = "break-all";
                 postElement.innerHTML = `
-                    <p>${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}</p>
+                    <p id="post-header-${post[0]['conversationLink']}">
+                        ${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}
+                    </p>
                     <hr>
                     ${parent['properties']['title'] !== undefined ? `<h3><b>${parent['properties']['title']}</b></h3>` : ''}
                     ${parent['properties']['subject'] !== undefined ? `<h6><b>${parent['properties']['subject']}</b></h6>` : ''}
                 `;
+
                 postElement.appendChild(content);
+
                 chatViewBox.appendChild(postElement);
+
+                let postHeader = document.getElementById(`post-header-${post[0]['conversationLink']}`);
+                postHeader.insertBefore(userFromProfilePicture, postHeader.children.item(0));
             }
         })
     // auto-scroll div to bottom
