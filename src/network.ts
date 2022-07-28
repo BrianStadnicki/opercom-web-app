@@ -1,26 +1,43 @@
 import {delay, urlMode} from "./utils";
 import {showNetworkStatus} from "./main";
 
+let currentFailing = false;
+
 async function networkFailure() {
-    showNetworkStatus(false);
-    const attempt = async () =>
-        await fetch(urlMode('/up.php'))
-            .then(async (response) => {
-                if (response.ok) {
-                    return true;
-                } else {
+    if (currentFailing) {
+        return new Promise<void>((resolve) => {
+            let interval = setInterval(() => {
+                if (!currentFailing) {
+                    return;
+                }
+                clearInterval(interval);
+                resolve();
+            }, 100)
+        })
+    } else {
+        currentFailing = true;
+        showNetworkStatus(false);
+        const attempt = async () =>
+            await fetch(urlMode('/up.php'))
+                .then(async (response) => {
+                    if (response.ok) {
+                        await delay(2000);
+                        currentFailing = false;
+                        return true;
+                    } else {
+                        await delay(2000);
+                        return attempt();
+                    }
+                })
+                .catch(async () => {
                     await delay(2000);
                     return attempt();
-                }
-            })
-            .catch(async () => {
-                await delay(2000);
-                return attempt();
-            });
+                });
 
-    return attempt().then(() => {
-        showNetworkStatus(true);
-    });
+        return attempt().then(() => {
+            showNetworkStatus(true);
+        });
+    }
 }
 
 /**
