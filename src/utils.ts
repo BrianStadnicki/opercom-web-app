@@ -60,3 +60,5 @@ export function cssValidID(id) {
 export function groupByKey(list, key) {
     return list.reduce((hash, obj) => ({...hash, [obj[key]]:( hash[obj[key]] || [] ).concat(obj)}), {})
 }
+
+export const delay = ms => new Promise(res => setTimeout(res, ms));

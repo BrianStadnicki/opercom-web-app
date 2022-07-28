@@ -26,10 +26,15 @@
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
+
     <div id="main-window" style="display: none;">
         <nav class="navbar bg-light" style="height: 5vh">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">TeamsBetter</a>
+                <div id="navbar-network-failure" style="display: none">
+                    <p class="float-start">Server offline...</p>
+                    <img class="float-end" src="assets/loading.gif" alt="loading indicator" height="32">
+                </div>
                 <img id="profile-picture-self" width="32" height="32" class="d-inline-block" alt="Profile picture" src="#">
             </div>
         </nav>
@@ -43,6 +48,11 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="window-network-failure" class="container-fluid text-center" style="display: none; height: 100%; width: 100%">
+        <h1>Server offline...</h1>
+        <img src="assets/loading.gif" alt="loading indicator" class="mx-auto">
     </div>
 </body>
 </html>

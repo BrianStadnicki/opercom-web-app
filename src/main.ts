@@ -1,9 +1,12 @@
 import {cssValidID, groupByKey} from "./utils";
 import {networkGetConversation, networkGetImgo, networkGetUserProfilePicture} from "./network";
 
+let mainActive = false;
+
 export async function hydrate() {
     // show main window
     document.getElementById('main-window').style.display = "block";
+    mainActive = true;
 
     // set self profile picture
     const selfProfilePicture = <HTMLImageElement>document.getElementById('profile-picture-self');
@@ -133,4 +136,22 @@ function renderChat(chat) {
         })
     // auto-scroll div to bottom
     chatViewBox.scrollTop = chatViewBox.scrollHeight;
+}
+
+export function showNetworkStatus(status) {
+    console.log("network is " + status);
+    if (!status) {
+        if (mainActive) {
+            document.getElementById('navbar-network-failure').style.display = 'inline';
+        } else {
+            document.getElementById('window-network-failure').style.display = 'block';
+        }
+    } else {
+        if (mainActive) {
+            document.getElementById('navbar-network-failure').style.display = 'none';
+        } else {
+            document.getElementById('window-network-failure').style.display = 'none';
+        }
+    }
+
 }

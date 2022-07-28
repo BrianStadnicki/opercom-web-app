@@ -1,4 +1,27 @@
-import {urlMode} from "./utils";
+import {delay, urlMode} from "./utils";
+import {showNetworkStatus} from "./main";
+
+async function networkFailure() {
+    showNetworkStatus(false);
+    const attempt = async () =>
+        await fetch(urlMode('/up.php'))
+            .then(async (response) => {
+                if (response.ok) {
+                    return true;
+                } else {
+                    await delay(2000);
+                    return attempt();
+                }
+            })
+            .catch(async () => {
+                await delay(2000);
+                return attempt();
+            });
+
+    return attempt().then(() => {
+        showNetworkStatus(true);
+    });
+}
 
 /**
  * Checks if the skype token is valid
@@ -9,7 +32,12 @@ export async function networkAuthSkypeToken() {
             "skype-token": localStorage.getItem("skype-token")
         }
     })
-        .then((res) => res.status);
+        .then((res) => res.status)
+        .catch(() => {
+            return networkFailure().then(() => {
+                return networkAuthSkypeToken();
+            })
+        });
 }
 
 /**
@@ -30,7 +58,12 @@ export async function networkGetUserProperties(email) {
             },
             "method": "GET"
     })
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(() => {
+            return networkFailure().then(() => {
+                return networkGetUserProperties(email);
+            })
+        });
 }
 
 /**
@@ -47,7 +80,12 @@ export async function networkGetUserProfilePicture(user, size) {
         },
         "method": "GET"
     })
-        .then(res => res.blob());
+        .then(res => res.blob())
+        .catch(() => {
+            return networkFailure().then(() => {
+                return networkGetUserProfilePicture(user, size);
+            })
+        });
 }
 
 /**
@@ -60,7 +98,12 @@ export async function networkGetTeamsList() {
         },
         "method": "GET"
     })
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(() => {
+            return networkFailure().then(() => {
+                return networkGetTeamsList();
+            })
+        });
 }
 
 /**
@@ -76,7 +119,12 @@ export async function networkGetConversation(thread, messages, startTime) {
         },
         "method": "GET"
     })
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(() => {
+            return networkFailure().then(() => {
+                return networkGetConversation(thread, messages, startTime);
+            })
+        });
 }
 
 /**
@@ -90,5 +138,10 @@ export async function networkGetImgo(object) {
         },
         "method": "GET"
     })
-        .then(res => res.blob());
+        .then(res => res.blob())
+        .catch(() => {
+            return networkFailure().then(() => {
+                return networkGetImgo(object);
+            })
+        });
 }
