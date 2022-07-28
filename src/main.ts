@@ -98,8 +98,8 @@ function renderChat(chat) {
                     let object = (<HTMLImageElement>img).src.match(/(?<=\/objects\/)(.*)(?=\/views\/)/g).pop();
                     (<HTMLImageElement>img).src = "";
                     (<HTMLImageElement>img).style.maxWidth = "100%";
-                    networkGetImgo(object).then(b64 => {
-                        (<HTMLImageElement>img).src = "data:image/jpg;base64," + b64;
+                    networkGetImgo(object).then(blob => {
+                        (<HTMLImageElement>img).src = URL.createObjectURL(blob);
                     })
                 });
                 let postElement = document.createElement('div');
