@@ -123,7 +123,7 @@ function renderChat(chat) {
                 let userFromProfilePicture = document.createElement('img');
                 userFromProfilePicture.width = 32;
                 userFromProfilePicture.height = 32;
-                userFromProfilePicture.classList.add("d-inline-block");
+                userFromProfilePicture.classList.add("d-inline");
                 networkGetUserProfilePicture(parent['from'].match(/(?<=\/contacts\/)(.*)(?=)/g).pop(), "HR64x64").then(blob => {
                     userFromProfilePicture.src = URL.createObjectURL(blob);
                 });
@@ -134,20 +134,17 @@ function renderChat(chat) {
                 postElement.style.width = 'auto';
                 postElement.style.wordBreak = "break-all";
                 postElement.innerHTML = `
-                    <p id="post-header-${post[0]['conversationLink']}">
-                        ${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}
-                    </p>
+                    <div class="d-inline">${parent['imdisplayname']} : ${new Date(Date.parse(parent['composetime'])).toLocaleString()}</div>
                     <hr>
                     ${parent['properties']['title'] !== undefined ? `<h3><b>${parent['properties']['title']}</b></h3>` : ''}
                     ${parent['properties']['subject'] !== undefined ? `<h6><b>${parent['properties']['subject']}</b></h6>` : ''}
                 `;
 
+                postElement.insertBefore(userFromProfilePicture, postElement.children.item(0));
+
                 postElement.appendChild(content);
 
                 chatViewBox.appendChild(postElement);
-
-                let postHeader = document.getElementById(`post-header-${post[0]['conversationLink']}`);
-                postHeader.insertBefore(userFromProfilePicture, postHeader.children.item(0));
             }
         })
     // auto-scroll div to bottom
