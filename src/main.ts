@@ -113,6 +113,11 @@ function renderChat(chat) {
                         (<HTMLImageElement>img).src = URL.createObjectURL(blob);
                     })
                 });
+                content.querySelectorAll('span[itemtype="http://schema.skype.com/Mention"]').forEach(tag => {
+                    tag.textContent = "@" + tag.textContent;
+                    tag.classList.add("text-bg-primary", "badge");
+                });
+
                 let postElement = document.createElement('div');
                 postElement.id = `post-${post[0]['conversationLink']}`;
                 postElement.classList.add('border', 'border-dark', 'm-2', 'p-2');
