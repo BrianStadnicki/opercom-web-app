@@ -130,7 +130,7 @@ function renderPost(post) {
         postElement.appendChild(content);
 
         if (post["length"] > 1) {
-            let comments = renderComments(post.slice(0, post.length - 1));
+            let comments = renderComments(post.slice(0, post.length - 1).reverse());
             postElement.appendChild(comments);
         }
 
