@@ -40,7 +40,7 @@ function createTeamsListItem(team) {
     const id = cssValidID(team['id']);
     res.id = `teams-list-${id}`;
     res.innerHTML = `
-        <a class="teams-list-team-name collapsible-teams-list-btn" type="button" active=false style="display: block">${team['name']}</a>
+        <a class="teams-list-team-name collapsible-teams-list-btn" type="button" style="display: block">${team['name']}</a>
             
         <div class="collapsed">
             ${
