@@ -113,7 +113,12 @@ function renderChat(chat) {
     let chatViewBox = document.getElementById('chat-view-box');
     Object.values(groupByKey(JSON.parse(localStorage.getItem(chat))['messages'], 'conversationLink'))
         .reverse()
-        .forEach(post => chatViewBox.appendChild(renderPost(post)));
+        .forEach(post => {
+            let rendered = renderPost(post);
+            if (rendered.innerText !== "") {
+                chatViewBox.appendChild(rendered)
+            }
+        });
     // auto-scroll div to bottom
     chatViewBox.scrollTop = chatViewBox.scrollHeight;
 }
