@@ -70,7 +70,7 @@ let currentActiveChat = "";
 window["switchChatView"] = switchChatView;
 
 function switchChatView(chat, putInHistory) {
-    document.getElementById('chat-view-box').innerHTML = "";
+    document.getElementById('chat-messages').innerHTML = "";
 
     let channelInList = document.getElementById(`list-group-item-action-${cssValidID(chat)}`);
     if (currentActiveChat !== "") {
@@ -111,17 +111,28 @@ function switchChatView(chat, putInHistory) {
 }
 
 function renderChat(chat) {
-    let chatViewBox = document.getElementById('chat-view-box');
+    document.getElementById('chat-messages').style.display = 'block';
+    document.getElementById('no-posts-exist').style.display = 'none';
+
+    let postsExist = false;
+    let chatMsgsBox = document.getElementById('chat-messages');
     Object.values(groupByKey(JSON.parse(localStorage.getItem(chat))['messages'], 'conversationLink'))
         .reverse()
         .forEach(post => {
             let rendered = renderPost(post);
             if (rendered.innerText !== "") {
-                chatViewBox.appendChild(rendered)
+                postsExist = true;
+                chatMsgsBox.appendChild(rendered)
             }
         });
+
+    if (!postsExist) {
+        document.getElementById('chat-messages').style.display = 'none';
+        document.getElementById('no-posts-exist').style.display = 'block';
+    }
+
     // auto-scroll div to bottom
-    chatViewBox.scrollTop = chatViewBox.scrollHeight;
+    chatMsgsBox.scrollTop = chatMsgsBox.scrollHeight;
 }
 
 function renderPost(post) {
