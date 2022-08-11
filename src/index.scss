@@ -107,6 +107,7 @@ body {
         }
 
         .collapsed {
+
             div {
                 background-color: $colour-4;
                 color: $colour-1;
@@ -115,6 +116,10 @@ body {
 
             div:hover, .active {
                 background-color: $colour-5;
+            }
+
+            .teams-list-channel.active {
+                background-color: $colour-2;
             }
         }
     }

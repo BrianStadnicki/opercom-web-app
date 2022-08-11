@@ -45,7 +45,7 @@ function createTeamsListItem(team) {
         <div class="collapsed">
             ${
                 team['channels'].map(channel => {
-                    return `<div class="list-group-item-action" id="list-group-item-action-${cssValidID(channel['id'])}" onclick="switchChatView('${channel['id']}', true)">${channel['name']}</div>`
+                    return `<div class="teams-list-channel" id="list-group-item-action-${cssValidID(channel['id'])}" onclick="switchChatView('${channel['id']}', true)">${channel['name']}</div>`
                 }).join('')
              }
         </div>
@@ -73,15 +73,16 @@ function switchChatView(chat, putInHistory) {
     document.getElementById('chat-view-box').innerHTML = "";
 
     let channelInList = document.getElementById(`list-group-item-action-${cssValidID(chat)}`);
-    channelInList.classList.add('text-bg-primary');
     if (currentActiveChat !== "") {
-        document.getElementById(`list-group-item-action-${cssValidID(currentActiveChat)}`).classList.remove('text-bg-primary');
+        document.getElementById(`list-group-item-action-${cssValidID(currentActiveChat)}`).classList.toggle('active');
     }
+    channelInList.classList.toggle('active');
+
     currentActiveChat = chat;
 
     let channelListBtn = channelInList.parentElement.previousElementSibling;
     if (!channelListBtn.classList.contains("active")) {
-        let activeButtons = document.getElementsByClassName("active");
+        let activeButtons = document.querySelectorAll('.teams-list-team-name.active');
         for (let i = 0; i < activeButtons.length; i++) {
             (<HTMLElement>activeButtons.item(i)).click();
         }
