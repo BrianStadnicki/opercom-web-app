@@ -1,0 +1,305 @@
+// variables
+
+$colour-1: #0F1D99;
+$colour-2: #E64F12;
+$colour-3: #0118E6;
+$colour-4: #62E617;
+$colour-5: #3D9908;
+
+/* token form */
+
+#enter-credentials-form {
+    display: grid;
+    row-gap: 10px;
+
+    border: black solid;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 15px;
+
+    div {
+        display: grid;
+        grid-template-columns: 100px auto;
+
+        padding: 10px;
+        border: blue solid;
+        border-radius: 10px;
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+    }
+}
+
+/* body */
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* navbar */
+
+#navbar {
+    height: 40px;
+    padding-top: 10px;
+    background-color: $colour-1;
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            display: inline;
+
+            * {
+                vertical-align: middle;
+                text-decoration: none;
+                color: $colour-4;
+                font-size: x-large;
+                font-weight: bolder;
+            }
+        }
+    }
+}
+
+/* main whole view layout */
+
+#main-whole {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    column-gap: 10px;
+    height: 95vh;
+}
+
+#teams-and-channels-box {
+    grid-column: 1 / 2;
+}
+
+/* teams and channels list */
+
+#chat-view-box {
+    grid-column: 2 / 3;
+    overflow-y: scroll;
+    max-height: 95vh;
+    padding-bottom: 10px;
+}
+
+#teams-and-channels-box {
+    overflow-y: scroll;
+    max-height: 95vh;
+    background-color: $colour-1;
+
+    .teams-list-item {
+
+        margin-bottom: 5px;
+
+        .teams-list-team-name {
+            text-decoration: none;
+            background-color: $colour-5;
+            color: $colour-1;
+            font-size: large;
+        }
+
+        .collapsed {
+            div {
+                background-color: $colour-4;
+                color: $colour-1;
+                font-size: large;
+            }
+
+            div:hover, .active {
+                background-color: $colour-5;
+            }
+        }
+    }
+}
+
+/* chat view box */
+
+#chat-view-box {
+
+    .post {
+
+        border-color: $colour-1;
+        border-style: solid;
+        border-radius: 5px;
+        border-width: 5px;
+        padding: 5px;
+        margin-top: 5px;
+
+        .post-header {
+            display: flex;
+            flex-direction: row;
+
+            .post-profile-image {
+                margin-right: 5px;
+            }
+
+            .post-name {
+                display: block;
+                vertical-align: super;
+                font-size: large;
+            }
+
+            hr {
+                display: block;
+            }
+
+            .post-date {
+                margin-left: auto;
+                vertical-align: super;
+
+                h4 {
+                    text-align: right;
+                    font-size: medium;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+
+                p {
+                    text-align: right;
+                    font-size: small;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        hr {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        h6 {
+            font-size: x-large;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .post-text-content {
+            display: flex;
+            flex-direction: column;
+
+            word-break: break-word;
+            box-sizing: border-box;
+
+            div {
+                margin-top: 0;
+                margin-bottom: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            p {
+                margin-block: 0;
+            }
+
+            .post-text-content-mention {
+                width: fit-content;
+                display: inline;
+                color: $colour-3;
+                background-color: $colour-2;
+                border-radius: 5px;
+                font-weight: bolder;
+            }
+
+            ul {
+                padding-top: 0;
+                padding-bottom: 0;
+                list-style-type: disc;
+            }
+
+            li {
+                display: list-item;
+                padding-top: 0;
+                padding-bottom: 0;
+                vertical-align: top;
+
+                word-break: initial;
+                white-space: initial;
+
+                ul {
+                    margin-top: 1.5em;
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        .comments-dropdown {
+            display: block;
+            text-decoration: none;
+            color: $colour-3;
+            background-color: $colour-5;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .comment {
+            border-color: $colour-4;
+            border-style: solid;
+            border-radius: 5px;
+            padding: 5px;
+
+            .comment-profile-picture {
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+            .comment-name {
+                display: inline-block;
+                vertical-align: super;
+                font-size: large;
+            }
+
+            .comment-date {
+                float: right;
+
+                p {
+                    display: inline;
+                    font-size: small;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    padding-right: 15px;
+                }
+
+                h4 {
+                    display: inline;
+                    font-size: medium;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+            }
+
+        }
+
+        .comment:not(:last-child) {
+            margin-bottom: 5px;
+        }
+
+    }
+
+}
+
+
+/* collapses teams list */
+
+.collapsible-teams-list-btn {
+    cursor: pointer;
+}
+
+.collapsible-teams-list-btn:hover {
+    background: $colour-4;
+}
+
+.collapsed {
+    display: none;
+    overflow: hidden;
+}

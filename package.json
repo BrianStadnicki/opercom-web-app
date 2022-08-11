@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@parcel/transformer-sass": "2.6.2",
     "parcel": "^2.6.2"
   },
   "scripts": {
@@ -11,5 +12,8 @@
   },
   "source": "src/index.ts",
   "module": "dist/index.js",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "moment": "^2.29.4"
+  }
 }
