@@ -152,7 +152,7 @@ function renderPost(post) {
         userFromProfilePicture.height = 32;
         userFromProfilePicture.classList.add("post-profile-image", "assignment");
         userFromProfilePicture.src = new URL("./assets/clipboard-data-fill.svg", import.meta.url).href;
-        postElement.insertBefore(userFromProfilePicture, postElement.children.item(0));
+        postElement.children.item(0).insertBefore(userFromProfilePicture, postElement.children.item(0).children.item(0));
 
         let cardInfo = JSON.parse(atob(new DOMParser().parseFromString(parent['content'], 'text/html')
             .getElementsByTagName("swift").item(0).getAttribute('b64')));
