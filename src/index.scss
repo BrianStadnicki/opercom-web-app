@@ -248,6 +248,24 @@ body {
             }
         }
 
+        .post-files {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-top: 15px;
+
+            a {
+                color: black;
+                text-decoration: none;
+                border-color: $colour-2;
+                border-style: solid;
+                border-radius: 5px;
+                padding: 5px;
+            }
+        }
+
         .comments-dropdown {
             display: block;
             text-decoration: none;

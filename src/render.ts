@@ -165,6 +165,20 @@ function renderPost(post) {
         postElement.children.item(0).insertBefore(userFromProfilePicture, postElement.children.item(0).children.item(0));
         postElement.appendChild(content);
 
+        if (parent['properties'].hasOwnProperty('files')) {
+            let files = JSON.parse(parent['properties']['files']);
+
+            let filesElement = document.createElement('div');
+            filesElement.classList.add('post-files');
+            filesElement.innerHTML = `${
+                files.map(file => `
+                    <a href="${file['objectUrl']}" target="_blank">${file['title']}</a>
+                `).join('')
+            }`;
+
+            postElement.appendChild(filesElement);
+        }
+
         if (post["length"] > 1) {
             let comments = renderComments(post.slice(0, post.length - 1).reverse());
             postElement.appendChild(comments);
