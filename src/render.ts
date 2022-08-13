@@ -13,7 +13,7 @@ export function renderChat(chat) {
         .reverse()
         .forEach(post => {
             let rendered = renderPost(post);
-            if (rendered.innerText !== "") {
+            if (rendered !== undefined) {
                 postsExist = true;
                 chatMsgsBox.appendChild(rendered)
             }
@@ -31,7 +31,7 @@ export function renderChat(chat) {
 function renderPost(post) {
     let parent = post["length"] > 1 ? post[post["length"] - 1] : post[0];
     if (parent['messagetype'].startsWith('ThreadActivity/')) {
-        return document.createElement('div');
+        return undefined;
     } else if (parent['messagetype'] === 'RichText/Media_Card') {
         let postElement = document.createElement('div');
         postElement.id = `post-${post[0]['conversationLink']}`;
@@ -247,7 +247,7 @@ function renderComments(comments) {
 
 function createContentElement(content) {
     let contentElement = document.createElement('div');
-    contentElement.classList.add("post-text-content")
+    contentElement.classList.add("post-text-content");
     contentElement.innerHTML = content;
 
     // remove redundant <div> from post content
