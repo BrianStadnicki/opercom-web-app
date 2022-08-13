@@ -108,6 +108,11 @@ body {
 
         .collapsed {
 
+            div:not(:first-child) {
+                border-top-style: dashed;
+                border-top-color: $colour-2;
+            }
+
             div {
                 background-color: $colour-4;
                 color: $colour-1;
