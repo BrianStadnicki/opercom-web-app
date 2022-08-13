@@ -218,8 +218,8 @@ body {
             }
 
             .post-text-content-mention {
+                display: contents;
                 width: fit-content;
-                display: inline;
                 color: $colour-3;
                 background-color: $colour-2;
                 border-radius: 5px;
