@@ -37,9 +37,10 @@ async function getCredentials() {
         let form = <HTMLFormElement>document.getElementById("enter-credentials-form");
         form.onsubmit = function (e) {
             e.preventDefault();
-            localStorage.setItem("skype-token", form.elements["skype-token"].value);
-            localStorage.setItem("auth-token", form.elements["auth-token"].value);
-            localStorage.setItem("email", form.elements["email"].value);
+            let tokens = JSON.parse(form.elements["tokens"].value);
+            localStorage.setItem("skype-token", tokens['skype']);
+            localStorage.setItem("auth-token", tokens['token']);
+            localStorage.setItem("email", tokens['email']);
 
             document.getElementById("enter-credentials").style.display = "none";
 

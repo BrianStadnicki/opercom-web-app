@@ -11,16 +11,18 @@
     <div id="enter-credentials" style="display: none;">
         <form id="enter-credentials-form">
             <div>
-                <label for="skype-token" class="form-label">Skype token</label>
-                <textarea type="text" class="form-control" id="skype-token"></textarea>
+                <p></p>
+                <div>
+                    <p>Open the console in Teams and paste in the following:</p>
+                    <code>
+                        document.body.innerHTML = `Copy and paste the following into OperCom:&lt;br&gt;&lt;span&gt;${JSON.stringify({'skype':JSON.parse(localStorage.getItem(`ts.${localStorage.getItem('ts.latestOid')}.auth.skype.token`))['skypeToken'],'token':'Bearer '+JSON.parse(localStorage.getItem(`ts.${localStorage.getItem('ts.latestOid')}.cache.token.https://api.spaces.skype.com`))['token'],'email':JSON.parse(localStorage.getItem('ts.userInfo'))['email']})}&lt;/span&gt;`;
+                    </code>
+                    <p>Paste the result below</p>
+                </div>
             </div>
             <div>
-                <label for="auth-token" class="form-label">Auth token</label>
-                <textarea type="text" class="form-control" id="auth-token"></textarea>
-            </div>
-            <div>
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email">
+                <label for="tokens" class="form-label">Tokens</label>
+                <textarea type="text" class="form-control" id="tokens"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>

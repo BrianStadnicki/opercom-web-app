@@ -25,6 +25,13 @@ $colour-5: #3D9908;
         border: blue solid;
         border-radius: 10px;
 
+        div {
+            display: initial;
+            border: initial;
+            word-break: break-word;
+            box-sizing: border-box;
+        }
+
         textarea {
             height: 100px;
             resize: vertical;
