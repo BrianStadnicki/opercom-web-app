@@ -273,7 +273,13 @@ function createContentElement(content) {
         (<HTMLImageElement>img).removeAttribute('width');
 
         networkGetImgo(object).then(blob => {
-            (<HTMLImageElement>img).src = URL.createObjectURL(blob);
+            let url = URL.createObjectURL(blob);
+            (<HTMLImageElement>img).src = url;
+
+            img.addEventListener('click', function () {
+                (<HTMLImageElement>document.getElementById('enlarged-image')).src = url;
+                document.getElementById('enlarged-image-modal').style.display = "flex";
+            });
         })
     });
 

@@ -31,6 +31,15 @@ export async function hydrate() {
     if (thread !== null) {
         switchChatView(thread, false);
     }
+
+    // setup image enlarge modal
+    document.getElementById('enlarged-image-modal').onclick = () => {
+        document.getElementById('enlarged-image-modal').style.display = "none";
+    }
+    document.getElementById('enlarged-image').onclick = (e) => {
+        e.stopPropagation();
+    }
+
 }
 
 function createTeamsListItem(team) {
