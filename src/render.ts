@@ -251,13 +251,16 @@ function createContentElement(content) {
     contentElement.innerHTML = content;
 
     // remove redundant <div> from post content
-    if (contentElement.children.length === 1) {
-        let current = contentElement.children.item(0);
-        while (current.children !== undefined && current.children.length === 1 && current.children.item(0).tagName === "DIV") {
-            current = current.children.item(0);
+    if (contentElement.childNodes.length === 1) {
+        let current = contentElement.childNodes.item(0);
+        while (current.childNodes !== undefined && current.childNodes.length === 1 && current.childNodes.item(0)["tagName"] === "DIV") {
+            current = current.childNodes.item(0);
         }
-        contentElement.innerHTML = current.innerHTML;
-        // contentElement.innerHTML = current.innerHTML;
+        if (current["innerHTML"] !== undefined) {
+            contentElement.innerHTML = current["innerHTML"];
+        } else {
+            contentElement.innerHTML = current.nodeValue;
+        }
     }
 
     // setup images
