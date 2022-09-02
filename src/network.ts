@@ -3,6 +3,7 @@ import {showNetworkStatus} from "./main";
 
 let currentFailing = false;
 
+// FIXME: Handle network failures properly, need network manager with queuing
 async function networkFailure() {
     if (currentFailing) {
         return new Promise<void>((resolve) => {
