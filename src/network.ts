@@ -143,3 +143,37 @@ export async function networkGetImgo(object) {
     })
         .then(res => res.blob());
 }
+
+/**
+ * Gets the socket url
+ */
+export async function networkGetSocketURL() {
+    return await fetchFromProxy('/updates/config.php', {
+        "headers": {
+            "skype-token": localStorage.getItem("skype-token")
+        },
+        "method": "GET"
+    })
+        .then(res => res.text())
+        .then(async text => {
+            let config = JSON.parse(text.replace('\u0000', ''));
+
+            let url = config['socketio'] + 'socket.io/1/?';
+            let params = new URLSearchParams('');
+            for (let key of Object.keys(config['connectparams'])) {
+                params.append(key, config['connectparams'][key]);
+            }
+
+            url += params.toString() + '&v=v4&tc=%7B%22cv%22:%222022.30.01.1%22,%22ua%22:%22TeamsCDL%22,%22hr%22:%22%22,%22v%22:%221.0.0.2022080828%22%7D&timeout=40&auth=true&epid=1&ccid=1&cor_id=1&con_num=1&t=1';
+
+            return await fetchFromProxy('/updates/socket-url.php', {
+                "headers": {
+                    "url": url
+                }
+            })
+                .then(res => res.text())
+                .then(res => {
+                    console.log(res);
+                });
+        });
+}

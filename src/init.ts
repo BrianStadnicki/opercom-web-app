@@ -1,8 +1,9 @@
-import {networkGetTeamsList, networkGetUserProperties} from "./network";
+import {networkGetTeamsList, networkGetSocketURL, networkGetUserProperties} from "./network";
 
 export async function init() {
     await getUserProperties(true);
     await getTeams(true);
+    setupSync().then(() => {});
 }
 
 async function getUserProperties(checkExists) {
@@ -38,6 +39,18 @@ async function getTeams(checkExists) {
             .then(res => {
                 localStorage.setItem("teams", JSON.stringify(res));
                 console.log(res);
+                resolve();
+            });
+    });
+}
+
+async function setupSync() {
+    return new Promise<void>(resolve => {
+        networkGetSocketURL()
+            .then(res => {
+                console.log(res);
+
+
                 resolve();
             });
     });
