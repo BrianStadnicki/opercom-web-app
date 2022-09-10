@@ -206,9 +206,10 @@ export async function networkGetImgo(object) {
  * Gets the socket url
  */
 export async function networkGetSocketURL() {
-    return await fetchFromProxy('/updates/config.php', {
+    return await fetchFromProxy('/region-trouter-teams-microsoft-com/v4/a/', {
         "headers": {
-            "skype-token": localStorage.getItem("skype-token")
+            "skype-token": localStorage.getItem("skype-token"),
+            "region": "go-eu"
         },
         "method": "GET"
     })
@@ -216,17 +217,17 @@ export async function networkGetSocketURL() {
         .then(async text => {
             let config = JSON.parse(text.replace('\u0000', ''));
 
-            let url = config['socketio'] + 'socket.io/1/?';
+            let region = config['socketio'].split(".")[0].substring(7);
             let params = new URLSearchParams('');
             for (let key of Object.keys(config['connectparams'])) {
                 params.append(key, config['connectparams'][key]);
             }
 
-            url += params.toString() + '&v=v4&tc=%7B%22cv%22:%222022.30.01.1%22,%22ua%22:%22TeamsCDL%22,%22hr%22:%22%22,%22v%22:%221.0.0.2022080828%22%7D&timeout=40&auth=true&epid=1&ccid=1&cor_id=1&con_num=1&t=1';
+            let paramsStr = params.toString() + '&v=v4&tc=%7B%22cv%22:%222022.30.01.1%22,%22ua%22:%22TeamsCDL%22,%22hr%22:%22%22,%22v%22:%221.0.0.2022080828%22%7D&timeout=40&auth=true&epid=1&ccid=1&cor_id=1&con_num=1&t=1';
 
-            return await fetchFromProxy('/updates/socket-url.php', {
+            return await fetchFromProxy('/region-trouter-teams-microsoft-com/socket.io/1/?' + paramsStr, {
                 "headers": {
-                    "url": url
+                    "region": region
                 }
             })
                 .then(res => res.text())
