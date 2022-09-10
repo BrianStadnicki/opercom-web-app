@@ -19,7 +19,7 @@ async function fetchFromProxy(url, fetchOptions): Promise<Response> {
                         });
 
                         let waitForInternet = function (_resolve, _reject) {
-                            fetch(urlMode('/up.php'))
+                            fetch(urlMode('/up'))
                                 .then(() => {
                                     _resolve();
                                 })
@@ -55,12 +55,30 @@ async function fetchFromProxy(url, fetchOptions): Promise<Response> {
  * Checks if the skype token is valid
  */
 export async function networkAuthSkypeToken() {
-    return await fetchFromProxy('/auth/skypetoken.php', {
+    return await fetchFromProxy('/region-asm-skype-com/v1/skypetokenauth', {
+        "method": "POST",
+        "body": "skypetoken=" + localStorage.getItem("skype-token"),
         "headers": {
-            "skype-token": localStorage.getItem("skype-token")
+            "skype-token": localStorage.getItem("skype-token"),
+            "region": "uk-api"
         }
     })
-        .then((res) => res.status);
+        .then(async (res) => {
+            if (res.status === 204 || res.status === 200) {
+                return await fetchFromProxy('/asyncgw-teams-microsoft-com/v1/skypetokenauth', {
+                    "method": "POST",
+                    "body": "skypetoken=" + localStorage.getItem("skype-token"),
+                    "headers": {
+                        "skype-token": localStorage.getItem("skype-token"),
+                        "region": "uk-prod"
+                    }
+                })
+                    .then((res) => res.status);
+
+            } else {
+                return res.status;
+            }
+        });
 }
 
 /**
@@ -73,7 +91,7 @@ export async function networkAuthSkypeToken() {
  * }
  */
 export async function networkGetUserProperties(email) {
-    return await fetchFromProxy(`/users/info.php?user=${encodeURIComponent(email)}&throwIfNotFound=false&isMailAddress=false&enableGuest=true&includeIBBarredUsers=true&skypeTeamsInfo=true`, {
+    return await fetchFromProxy(`/teams-microsoft-com/api/mt/emea/beta/users/${encodeURIComponent(email)}?throwIfNotFound=false&isMailAddress=false&enableGuest=true&includeIBBarredUsers=true&skypeTeamsInfo=true`, {
             "headers": {
                 "bearer-token": localStorage.getItem("auth-token"),
                 "skype-token": localStorage.getItem("skype-token"),
@@ -91,7 +109,7 @@ export async function networkGetUserProperties(email) {
  * @return base64-encoded image
  */
 export async function networkGetUserProfilePicture(user, size) {
-    return await fetchFromProxy(`/users/profilepicture.php?user=${user}&size=${size}`, {
+    return await fetchFromProxy(`/teams-microsoft-com/api/mt/emea/beta/users/${user}/profilepicturev2?size=${size}`, {
         "headers": {
             "bearer-token": localStorage.getItem("auth-token"),
             "skype-token": localStorage.getItem("skype-token")
@@ -105,13 +123,52 @@ export async function networkGetUserProfilePicture(user, size) {
  * Gets the user's teams and channels
  */
 export async function networkGetTeamsList() {
-    return await fetchFromProxy('/teams/list.php', {
+    return await fetchFromProxy('/region-ng-msg-teams-microsoft-com/v1/users/ME/conversations', {
         "headers": {
-            "skype-token": localStorage.getItem("skype-token")
+            "skype-token": localStorage.getItem("skype-token"),
+            "region": "uk"
         },
         "method": "GET"
     })
-        .then(res => res.json());
+        .then(res => res.json())
+        .then(json => {
+            let res = {
+                "teams": []
+            };
+
+            json['conversations'].forEach(conversation => {
+                if (conversation['threadProperties']['threadType'] === 'space' &&
+                    !conversation['threadProperties']['isdeleted']) {
+                    let channels = [
+                        {
+                            "id": conversation['id'],
+                            "name": "General"
+                        }
+                    ];
+
+                    if (conversation['threadProperties']['topics']) {
+                        JSON.parse(conversation['threadProperties']['topics']).forEach(topic => {
+                            if (!topic['isdeleted']) {
+                                channels.push({
+                                    "id": topic['id'],
+                                    "name": topic['name']
+                                })
+                            }
+                        })
+                    }
+
+                    res['teams'].push(
+                        {
+                            "id": conversation["id"],
+                            "name": conversation['threadProperties']['spaceThreadTopic'],
+                            "channels": channels
+                        }
+                    );
+                }
+            })
+
+            return res;
+        });
 }
 
 /**
@@ -121,9 +178,10 @@ export async function networkGetTeamsList() {
  * @param startTime start time
  */
 export async function networkGetConversation(thread, messages, startTime) {
-    return await fetchFromProxy(`/teams/conversation.php?thread=${encodeURIComponent(thread)}&pageSize=${messages}&startTime=${startTime}`, {
+    return await fetchFromProxy(`/region-ng-msg-teams-microsoft-com/v1/users/ME/conversations/${encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}`, {
         "headers": {
-            "skype-token": localStorage.getItem("skype-token")
+            "skype-token": localStorage.getItem("skype-token"),
+            "region": "uk"
         },
         "method": "GET"
     })
@@ -135,7 +193,7 @@ export async function networkGetConversation(thread, messages, startTime) {
  * @param object image object id
  */
 export async function networkGetImgo(object) {
-    return await fetchFromProxy(`/assets/imgo.php?id=${object}&v=1`, {
+    return await fetchFromProxy(`/region-asyncgw-teams-microsoft-com/v1/objects/${object}/views/imgo?v=1`, {
         "headers": {
             "skype-token": localStorage.getItem("skype-token")
         },

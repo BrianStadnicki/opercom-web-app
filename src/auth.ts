@@ -22,7 +22,8 @@ async function ensureHaveCredentials() {
 
 async function ensureCredentialsValid() {
     return new Promise<void>(async resolve => {
-        if ((await networkAuthSkypeToken()) !== 204) {
+        let skypeTokenValid = await networkAuthSkypeToken();
+        if (skypeTokenValid !== 204 && skypeTokenValid !== 200) {
             await getCredentials();
             await ensureCredentialsValid();
         }
