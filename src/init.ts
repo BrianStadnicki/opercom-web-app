@@ -18,9 +18,9 @@ async function getUserProperties(checkExists) {
     return new Promise<void>(resolve => {
         networkGetUserProperties(localStorage.getItem("email"))
             .then(res => {
-                localStorage.setItem("user-id", res["user-id"]);
-                localStorage.setItem("user-name", res["user-name"])
-                localStorage.setItem("is-private-chat-enabled", res["is-private-chat-enabled"])
+                localStorage.setItem("user-id", res["value"]["mri"]);
+                localStorage.setItem("user-name", res["value"]["displayName"])
+                localStorage.setItem("is-private-chat-enabled", res["value"]["featureSettings"]["isPrivateChatEnabled"])
 
                 resolve();
             });
