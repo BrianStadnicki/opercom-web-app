@@ -1,4 +1,4 @@
-import {delay, urlMode} from "./utils";
+import {delay} from "./utils";
 
 let networkUp = true;
 let waitingForNetworkCallbacks = [];
@@ -6,7 +6,7 @@ let waitingForNetworkCallbacks = [];
 async function fetchFromProxy(url, fetchOptions): Promise<Response> {
     let promiseFunction = function (resolve, reject) {
         if (networkUp) {
-            fetch(urlMode(url), fetchOptions)
+            fetch(url, fetchOptions)
                 .then((response) => {
                     resolve(response);
                 })
@@ -19,7 +19,7 @@ async function fetchFromProxy(url, fetchOptions): Promise<Response> {
                         });
 
                         let waitForInternet = function (_resolve, _reject) {
-                            fetch(urlMode('/up'))
+                            fetch('https://teams.microsoft.com')
                                 .then(() => {
                                     _resolve();
                                 })
@@ -55,21 +55,23 @@ async function fetchFromProxy(url, fetchOptions): Promise<Response> {
  * Checks if the skype token is valid
  */
 export async function networkAuthSkypeToken() {
-    return await fetchFromProxy('/region-asm-skype-com/v1/skypetokenauth', {
+    return await fetchFromProxy("https://asm.skype.com/v1/skypetokenauth", {
         "method": "POST",
+        "credentials": "include",
         "body": "skypetoken=" + localStorage.getItem("skype-token"),
         "headers": {
-            "skype-token": localStorage.getItem("skype-token"),
+            "Authorization": `skypetoken=${localStorage.getItem("skype-token")}`,
             "region": "uk-api"
         }
     })
         .then(async (res) => {
             if (res.status === 204 || res.status === 200) {
-                return await fetchFromProxy('/asyncgw-teams-microsoft-com/v1/skypetokenauth', {
+                return await fetchFromProxy("https://asyncgw.teams.microsoft.com/v1/skypetokenauth", {
                     "method": "POST",
+                    "credentials": "include",
                     "body": "skypetoken=" + localStorage.getItem("skype-token"),
                     "headers": {
-                        "skype-token": localStorage.getItem("skype-token"),
+                        "Authorization": `skypetoken=${localStorage.getItem("skype-token")}`,
                         "region": "uk-prod"
                     }
                 })
@@ -91,13 +93,14 @@ export async function networkAuthSkypeToken() {
  * }
  */
 export async function networkGetUserProperties(email) {
-    return await fetchFromProxy(`/teams-microsoft-com/api/mt/emea/beta/users/${encodeURIComponent(email)}?throwIfNotFound=false&isMailAddress=false&enableGuest=true&includeIBBarredUsers=true&skypeTeamsInfo=true`, {
+    return await fetchFromProxy(`https://teams.microsoft.com/api/mt/emea/beta/users/${encodeURIComponent(email)}?throwIfNotFound=false&isMailAddress=false&enableGuest=true&includeIBBarredUsers=true&skypeTeamsInfo=true`, {
             "headers": {
                 "bearer-token": localStorage.getItem("auth-token"),
                 "skype-token": localStorage.getItem("skype-token"),
                 "email": localStorage.getItem("email")
             },
-            "method": "GET"
+            "method": "GET",
+            "credentials": "same-origin"
     })
         .then(res => res.json());
 }
@@ -109,11 +112,8 @@ export async function networkGetUserProperties(email) {
  * @return base64-encoded image
  */
 export async function networkGetUserProfilePicture(user, size) {
-    return await fetchFromProxy(`/teams-microsoft-com/api/mt/emea/beta/users/${user}/profilepicturev2?size=${size}`, {
-        "headers": {
-            "bearer-token": localStorage.getItem("auth-token"),
-            "skype-token": localStorage.getItem("skype-token")
-        },
+    return await fetchFromProxy(`https://teams.microsoft.com/api/mt/emea/beta/users/${user}/profilepicturev2?size=${size}`, {
+        "credentials": "include",
         "method": "GET"
     })
         .then(res => res.blob());
@@ -123,11 +123,12 @@ export async function networkGetUserProfilePicture(user, size) {
  * Gets the user's teams and channels
  */
 export async function networkGetTeamsList() {
-    return await fetchFromProxy('/region-ng-msg-teams-microsoft-com/v1/users/ME/conversations', {
+    return await fetchFromProxy("https://ng.msg.teams.microsoft.com/v1/users/ME/conversations", {
         "headers": {
             "skype-token": localStorage.getItem("skype-token"),
             "region": "uk"
         },
+        "credentials": "same-origin",
         "method": "GET"
     })
         .then(res => res.json())
@@ -178,11 +179,12 @@ export async function networkGetTeamsList() {
  * @param startTime start time
  */
 export async function networkGetConversation(thread, messages, startTime) {
-    return await fetchFromProxy(`/region-ng-msg-teams-microsoft-com/v1/users/ME/conversations/${encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}`, {
+    return await fetchFromProxy(`https://ng.msg.teams.microsoft.com/v1/users/ME/conversations/${encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}`, {
         "headers": {
             "skype-token": localStorage.getItem("skype-token"),
             "region": "uk"
         },
+        "credentials": "same-origin",
         "method": "GET"
     })
         .then(res => res.json());
@@ -193,10 +195,11 @@ export async function networkGetConversation(thread, messages, startTime) {
  * @param object image object id
  */
 export async function networkGetImgo(object) {
-    return await fetchFromProxy(`/region-asyncgw-teams-microsoft-com/v1/objects/${object}/views/imgo?v=1`, {
+    return await fetchFromProxy(`https://asyncgw.teams.microsoft.com/v1/objects/${object}/views/imgo?v=1`, {
         "headers": {
             "skype-token": localStorage.getItem("skype-token")
         },
+        "credentials": "same-origin",
         "method": "GET"
     })
         .then(res => res.blob());
@@ -205,12 +208,13 @@ export async function networkGetImgo(object) {
 /**
  * Gets the socket url
  */
-export async function networkGetSocketURL() {
-    return await fetchFromProxy('/region-trouter-teams-microsoft-com/v4/a/', {
+export async function networkGetSocket() {
+    return await fetchFromProxy("https://trouter.teams.microsoft.com/v4/a/", {
         "headers": {
-            "skype-token": localStorage.getItem("skype-token"),
+            "x-skypetoken": localStorage.getItem("skype-token"),
             "region": "go-eu"
         },
+        "credentials": "same-origin",
         "method": "GET"
     })
         .then(res => res.text())
@@ -223,16 +227,23 @@ export async function networkGetSocketURL() {
                 params.append(key, config['connectparams'][key]);
             }
 
+            params.append("region", region);
+            // params.append("skype-token", localStorage.getItem("skype-token"));
+            // params.append("bearer-token", localStorage.getItem("auth-token"));
+            // params.append("tenant-id", localStorage.getItem("tenant-id")); // FIXME: add fetching this from tenants
+
             let paramsStr = params.toString() + '&v=v4&tc=%7B%22cv%22:%222022.30.01.1%22,%22ua%22:%22TeamsCDL%22,%22hr%22:%22%22,%22v%22:%221.0.0.2022080828%22%7D&timeout=40&auth=true&epid=1&ccid=1&cor_id=1&con_num=1&t=1';
 
-            return await fetchFromProxy('/region-trouter-teams-microsoft-com/socket.io/1/?' + paramsStr, {
+            return await fetchFromProxy("https://trouter.teams.microsoft.com/socket.io/1/?" + paramsStr, {
                 "headers": {
                     "region": region
                 }
             })
                 .then(res => res.text())
                 .then(res => {
-                    console.log(res);
+                    let id = res.split(":")[0];
+                    // TODO: implement passing region as url parameter
+                    return new WebSocket(`https://trouter.teams.microsoft.com/socket.io/1/websocket/${id}?${paramsStr}`.replace("http://", "wss://"));
                 });
         });
 }

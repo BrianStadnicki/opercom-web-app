@@ -36,15 +36,6 @@ export function setCookie(name, value) {
 }
 
 /**
- * Modifies the url to either be for debug or production depending on the current mode
- * @param url url to modify
- */
-export function urlMode(url) {
-    let baseURL = localStorage.getItem("base-url");
-    return baseURL === null ? url : baseURL + url;
-}
-
-/**
  * Modifies an ID to be valid css
  * @param id id
  */
