@@ -140,7 +140,7 @@ function renderPost(post) {
         userFromProfilePicture.width = 32;
         userFromProfilePicture.height = 32;
         userFromProfilePicture.classList.add("post-profile-image");
-        networkGetUserProfilePicture(parent['from'].match(/(?<=\/contacts\/)(.*)/g).pop(), "HR64x64").then(blob => {
+        networkGetUserProfilePicture(parent['from'].substring(parent['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(blob => {
             userFromProfilePicture.src = URL.createObjectURL(blob);
         });
 
@@ -233,7 +233,7 @@ function renderComments(comments) {
         userFromProfilePicture.width = 24;
         userFromProfilePicture.height = 24;
         userFromProfilePicture.classList.add("comment-profile-picture");
-        networkGetUserProfilePicture(comment['from'].match(/(?<=\/contacts\/)(.*)/g).pop(), "HR64x64").then(blob => {
+        networkGetUserProfilePicture(comment['from'].substring(comment['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(blob => {
             userFromProfilePicture.src = URL.createObjectURL(blob);
         });
         commentElement.insertBefore(userFromProfilePicture, commentElement.children.item(0));
@@ -265,7 +265,7 @@ function createContentElement(content) {
 
     // setup images
     contentElement.querySelectorAll('img[itemtype="http://schema.skype.com/AMSImage"]').forEach(img => {
-        let object = (<HTMLImageElement>img).src.match(/(?<=\/objects\/)(.*)(?=\/views\/)/g).pop();
+        let object = (<HTMLImageElement>img).src.substring((<HTMLImageElement>img).src.indexOf("/objects/") + "/object /".length, (<HTMLImageElement>img).src.indexOf("/views/"));
         (<HTMLImageElement>img).src = "";
         (<HTMLImageElement>img).style.maxWidth = "80%";
         (<HTMLImageElement>img).style.maxHeight = "25vh";
