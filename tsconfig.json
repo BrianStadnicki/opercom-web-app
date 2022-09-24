@@ -10,8 +10,10 @@
       "es5",
       "scripthost",
       "es2015.promise",
-      "es2017.object"
+      "es2017.object",
+      "es2015.collection"
     ],
+    "moduleResolution": "Node",
     "module": "es2022"
   },
   "exclude": [

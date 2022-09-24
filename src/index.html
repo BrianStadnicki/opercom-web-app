@@ -15,7 +15,7 @@
                 <div>
                     <p>Open the console in Teams and paste in the following:</p>
                     <code>
-                        document.body.innerHTML = `Copy and paste the following into OperCom:&lt;br&gt;&lt;span&gt;${JSON.stringify({'skype':JSON.parse(localStorage.getItem(`ts.${localStorage.getItem('ts.latestOid')}.auth.skype.token`))['skypeToken'],'token':'Bearer '+JSON.parse(localStorage.getItem(`ts.${localStorage.getItem('ts.latestOid')}.cache.token.https://api.spaces.skype.com`))['token'],'email':JSON.parse(localStorage.getItem('ts.userInfo'))['email']})}&lt;/span&gt;`;
+                        document.body.innerHTML = `Copy and paste the following into OperCom:<br><span>${JSON.stringify({'skype':document.cookie.split('; ').find((row) => row.startsWith('skypetoken_asm='))?.split('=')[1],'token':'Bearer '+document.cookie.split('; ').find((row) => row.startsWith('TSAUTHCOOKIE='))?.split('=')[1],'email':JSON.parse(localStorage.getItem('ts.userInfo'))['email']})}</span>`;&lt;/span&gt;`;
                     </code>
                     <p>Paste the result below</p>
                 </div>

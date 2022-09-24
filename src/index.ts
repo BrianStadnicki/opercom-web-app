@@ -1,8 +1,10 @@
 import {auth} from "./auth";
 import {init} from "./init";
 import {hydrate} from "./main";
+import {invoke} from '@tauri-apps/api/tauri';
 
-window.addEventListener("load", function () {
+window.addEventListener("load", async function () {
+
     console.log("Beginning auth...");
     auth().then(() => {
         console.log("Done");
@@ -15,4 +17,18 @@ window.addEventListener("load", function () {
             });
         });
     });
+
+
+    /*
+    let res = await invoke('fetch_cors', {
+        uri: "https://opercom.co.uk",
+        method: "GET",
+        headers: new Map([
+        ]),
+        body: ""
+    });
+
+    console.log(res);
+
+     */
 });
