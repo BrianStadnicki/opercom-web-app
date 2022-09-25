@@ -13,7 +13,8 @@
   },
   "scripts": {
     "start": "yarn parcel src/index.html",
-    "build": "yarn pacel build"
+    "build": "yarn pacel build",
+    "tauri-dev": "yarn tauri dev"
   },
   "source": "src/index.ts",
   "module": "dist/index.js",
