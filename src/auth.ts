@@ -31,7 +31,7 @@ async function ensureCredentialsValid() {
     });
 }
 
-async function getCredentials() {
+export async function getCredentials() {
     document.getElementById("enter-credentials").style.display = "block";
 
     return new Promise<void>(resolve => {

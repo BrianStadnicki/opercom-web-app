@@ -20,6 +20,9 @@ async function fetchFromProxy(url, fetchOptions): Promise<[number, string]> {
             passFetch(url, fetchOptions)
                 .then((response) => {
                     console.log(response);
+                    if (response.status === 401) {
+                        getCredentials().then(() => location.reload());
+                    }
                     resolve(response);
                 })
                 .catch((error) => {
