@@ -15,7 +15,8 @@ export function renderChat(chat) {
             let rendered = renderPost(post);
             if (rendered !== undefined) {
                 postsExist = true;
-                chatMsgsBox.appendChild(rendered)
+                chatMsgsBox.appendChild(rendered);
+                rendered.scrollIntoView(false);
             }
         });
 

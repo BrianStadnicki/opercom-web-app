@@ -141,10 +141,6 @@ body {
 
 #chat-view-box {
 
-    // layout bottom-up
-    display: flex;
-    flex-direction: column-reverse;
-
     #no-posts-exist {
         height: 100%;
         background:
