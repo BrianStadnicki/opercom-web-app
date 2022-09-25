@@ -25,7 +25,7 @@ export function renderChat(chat) {
     }
 
     // auto-scroll div to bottom
-    chatMsgsBox.scrollTop = chatMsgsBox.scrollHeight;
+    document.getElementById("chat-view-box").scrollTop = document.getElementById("chat-view-box").scrollHeight
 }
 
 function renderPost(post) {
