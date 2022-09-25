@@ -1,24 +1,29 @@
 import {delay} from "./utils";
-import {invoke} from "@tauri-apps/api/tauri";
-
-async function passFetch(uri, options) {
-    console.log(options);
-    return invoke('fetch_cors', {
-        uri: uri,
-        method: options["method"] === undefined ? "GET" : options["method"],
-        headers: new Map(options["headers"] === undefined ? [] : options["headers"]),
-        body: options["body"] === undefined ? "" : options["body"]
-    });
-}
+import {Body, fetch, Response, ResponseType} from '@tauri-apps/api/http';
+import {getCredentials} from "./auth";
 
 let networkUp = true;
 let waitingForNetworkCallbacks = [];
 
-async function fetchFromProxy(url, fetchOptions): Promise<[number, string]> {
+function checkImageCache(image) {
+    if (localStorage.getItem(`cache-image-${image}`) !== undefined) {
+        return localStorage.getItem(`cache-image-${image}`);
+    }
+    return false;
+}
+
+function addToImageCache(image, b64) {
+    localStorage.setItem(`cache-image-${image}`, b64);
+}
+
+async function fetchFromProxy(url, fetchOptions): Promise<Response<any>> {
+    console.log("fetching")
+    console.log(url);
+    console.log(fetchOptions)
     let promiseFunction = function (resolve, reject) {
         if (networkUp) {
-            passFetch(url, fetchOptions)
-                .then((response) => {
+            fetch(url, fetchOptions)
+                .then((response: Response<any>) => {
                     console.log(response);
                     if (response.status === 401) {
                         getCredentials().then(() => location.reload());
@@ -26,7 +31,7 @@ async function fetchFromProxy(url, fetchOptions): Promise<[number, string]> {
                     resolve(response);
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.log(error, url, fetchOptions);
                     if (networkUp) {
                         networkUp = false;
 
@@ -35,7 +40,7 @@ async function fetchFromProxy(url, fetchOptions): Promise<[number, string]> {
                         });
 
                         let waitForInternet = function (_resolve, _reject) {
-                            passFetch('https://teams.microsoft.com', {})
+                            fetch('https://teams.microsoft.com', { method: "GET" })
                                 .then(() => {
                                     _resolve();
                                 })
@@ -73,28 +78,26 @@ async function fetchFromProxy(url, fetchOptions): Promise<[number, string]> {
 export async function networkAuthSkypeToken() {
     return await fetchFromProxy("https://uk-api.asm.skype.com/v1/skypetokenauth", {
         "method": "POST",
-        "body": "skypetoken=" + localStorage.getItem("skype-token"),
-        "headers": [
-            ["origin", "https://teams.microsoft.com"],
-            ["authorization", `skypetoken=${localStorage.getItem("skype-token")}`],
-            ["cookie", `skypetoken_asm=${localStorage.getItem("skype-token")}; platformid=1415`]
-        ]
+        "body": Body.text("skypetoken=" + localStorage.getItem("skype-token")),
+        "headers": {
+            "origin": "https://teams.microsoft.com",
+            "authorization": `skypetoken=${localStorage.getItem("skype-token")}`,
+            "cookie": `skypetoken_asm=${localStorage.getItem("skype-token")}; platformid=1415`
+        }
     })
         .then(async (res) => {
-            console.log(res)
-            if (res[0] === 204 || res[0] === 200) {
+            if (res.status === 204 || res.status === 200) {
                 return await fetchFromProxy("https://uk-prod.asyncgw.teams.microsoft.com/v1/skypetokenauth", {
                     "method": "POST",
-                    "credentials": "include",
-                    "body": "skypetoken=" + localStorage.getItem("skype-token"),
-                    "headers": [
-                        ["Authorization", `skypetoken=${localStorage.getItem("skype-token")}`],
-                    ]
+                    "body": Body.text("skypetoken=" + localStorage.getItem("skype-token")),
+                    "headers": {
+                        "Authorization": `skypetoken=${localStorage.getItem("skype-token")}`,
+                    }
                 })
-                    .then((res) => res[0]);
+                    .then((res) => res.status);
 
             } else {
-                return res[0];
+                return res.status;
             }
         });
 }
@@ -110,19 +113,18 @@ export async function networkAuthSkypeToken() {
  */
 export async function networkGetUserProperties(email) {
     return await fetchFromProxy(`https://teams.microsoft.com/api/mt/emea/beta/users/${encodeURIComponent(email)}/?throwIfNotFound=false&isMailAddress=false&enableGuest=true&includeIBBarredUsers=true&skypeTeamsInfo=true`, {
-            "headers": [
-                ["origin", "https://teams.microsoft.com/"],
-                ["host", "https://teams.microsoft.com/"],
-                ["authority", "https://teams.microsoft.com/"],
-                ["referer", "https://teams.microsoft.com/_"],
-                ["authorization", localStorage.getItem("auth-token")],
-                ["cookie", `skypetoken_asm=${localStorage.getItem("skype-token")}; authtoken=${localStorage.getItem("auth-token").replace("Bearer ", "Bearer%3D")}%26Origin%3Dhttps%3A%2F%2Fteams.microsoft.com`],
-                ["x-skypetoken", localStorage.getItem("skype-token")],
-                ["x-anchormailbox", localStorage.getItem("email")]
-            ],
+            "headers": {
+                "origin": "https://teams.microsoft.com",
+                "host": "https://teams.microsoft.com",
+                "referer": "https://teams.microsoft.com/_",
+                "authority": "teams.microsoft.com",
+                "authorization": localStorage.getItem("auth-token"),
+                "x-skypetoken": localStorage.getItem("skype-token"),
+                "x-anchormailbox": localStorage.getItem("email")
+            },
             "method": "GET"
     })
-        .then(res => JSON.parse(res[1]));
+        .then(res => res.data);
 }
 
 /**
@@ -132,12 +134,25 @@ export async function networkGetUserProperties(email) {
  * @return base64-encoded image
  */
 export async function networkGetUserProfilePicture(user, size) {
+    let cached = checkImageCache(`user-profile-picture-${user}-${size}`);
+    if (cached) {
+        return cached;
+    }
+
     return await fetchFromProxy(`https://teams.microsoft.com/api/mt/emea/beta/users/${user}/profilepicturev2?size=${size}`, {
-        "credentials": "include",
-        "method": "GET"
+        "headers": {
+            "cookie": `skypetoken_asm=${localStorage.getItem("skype-token")}; authtoken=${localStorage.getItem("auth-token").replace("Bearer ", "Bearer%3D")}&Origin=https://teams.microsoft.com`,
+            "authority": "teams.microsoft.com",
+            "referer": "https://teams.microsoft.com/_"
+        },
+        "method": "GET",
+        "responseType": ResponseType.Binary
     })
-        // @ts-ignore
-        .then(res => new Blob(new TextEncoder().encode(res[1]).buffer));
+        .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
+        .then(b64 => {
+            addToImageCache(`user-profile-picture-${user}-${size}`, b64);
+            return b64;
+        })
 }
 
 /**
@@ -145,13 +160,16 @@ export async function networkGetUserProfilePicture(user, size) {
  */
 export async function networkGetTeamsList() {
     return await fetchFromProxy("https://uk.ng.msg.teams.microsoft.com/v1/users/ME/conversations", {
-        "headers": [
-            ["skype-token", localStorage.getItem("skype-token")]
-        ],
-        "credentials": "same-origin",
+        "headers": {
+            "authentication": `skypetoken=${localStorage.getItem("skype-token")}`
+        },
         "method": "GET"
     })
-        .then(res => JSON.parse(res[1]))
+        .then(res => {
+            console.log(res);
+            return res;
+        })
+        .then(res => res.data)
         .then(json => {
             let res = {
                 "teams": []
@@ -200,13 +218,12 @@ export async function networkGetTeamsList() {
  */
 export async function networkGetConversation(thread, messages, startTime) {
     return await fetchFromProxy(`https://uk.ng.msg.teams.microsoft.com/v1/users/ME/conversations/${encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}`, {
-        "headers": [
-            ["skype-token", localStorage.getItem("skype-token")],
-        ],
-        "credentials": "same-origin",
+        "headers": {
+            "authentication": `skypetoken=${localStorage.getItem("skype-token")}`
+        },
         "method": "GET"
     })
-        .then(res => JSON.parse(res[1]));
+        .then(res => res.data);
 }
 
 /**
@@ -214,24 +231,33 @@ export async function networkGetConversation(thread, messages, startTime) {
  * @param object image object id
  */
 export async function networkGetImgo(object) {
-    return await fetchFromProxy(`https://asyncgw.teams.microsoft.com/v1/objects/${object}/views/imgo?v=1`, {
-        "headers": [
-            ["skype-token", localStorage.getItem("skype-token")]
-        ],
-        "credentials": "same-origin",
-        "method": "GET"
+    let cached = checkImageCache(`imgo-${object}`);
+    if (cached) {
+        return cached;
+    }
+
+    return await fetchFromProxy(`https://uk-prod.asyncgw.teams.microsoft.com/v1/objects/${object}/views/imgo?v=1`, {
+        "headers": {
+            "authorization": `skype_token ${localStorage.getItem("skype-token")}`
+        },
+        "method": "GET",
+        "responseType": ResponseType.Binary
     })
-        // @ts-ignore
-        .then(res => new Blob(new TextEncoder().encode(res[1]).buffer));}
+        .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
+        .then(b64 => {
+            addToImageCache(`imgo-${object}`, b64);
+            return b64;
+        });
+}
 
 /**
  * Gets the socket url
  */
 export async function networkGetSocket() {
     return await fetchFromProxy("https://go-eu.trouter.teams.microsoft.com/v4/a/", {
-        "headers": [
-            ["x-skypetoken", localStorage.getItem("skype-token")],
-        ],
+        "headers": {
+            "x-skypetoken": localStorage.getItem("skype-token"),
+        },
         "credentials": "same-origin",
         "method": "GET"
     })
@@ -253,10 +279,9 @@ export async function networkGetSocket() {
             let paramsStr = params.toString() + '&v=v4&tc=%7B%22cv%22:%222022.30.01.1%22,%22ua%22:%22TeamsCDL%22,%22hr%22:%22%22,%22v%22:%221.0.0.2022080828%22%7D&timeout=40&auth=true&epid=1&ccid=1&cor_id=1&con_num=1&t=1';
 
             return await fetchFromProxy(`https://${region}.trouter.teams.microsoft.com/socket.io/1/?` + paramsStr, {
-                "headers": [
-                ]
+                "headers": {}
             })
-                .then(res => res[1])
+                .then(res => res.data)
                 .then(res => {
                     let id = res.split(":")[0];
                     // TODO: implement passing region as url parameter

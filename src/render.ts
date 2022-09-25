@@ -140,8 +140,8 @@ function renderPost(post) {
         userFromProfilePicture.width = 32;
         userFromProfilePicture.height = 32;
         userFromProfilePicture.classList.add("post-profile-image");
-        networkGetUserProfilePicture(parent['from'].substring(parent['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(blob => {
-            userFromProfilePicture.src = URL.createObjectURL(blob);
+        networkGetUserProfilePicture(parent['from'].substring(parent['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(b64 => {
+            userFromProfilePicture.src = `data:image/jpeg;base64,${b64}`;
         });
 
         let postElement = document.createElement('div');
@@ -233,8 +233,8 @@ function renderComments(comments) {
         userFromProfilePicture.width = 24;
         userFromProfilePicture.height = 24;
         userFromProfilePicture.classList.add("comment-profile-picture");
-        networkGetUserProfilePicture(comment['from'].substring(comment['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(blob => {
-            userFromProfilePicture.src = URL.createObjectURL(blob);
+        networkGetUserProfilePicture(comment['from'].substring(comment['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(b64 => {
+            userFromProfilePicture.src = `data:image/jpeg;base64,${b64}`;
         });
         commentElement.insertBefore(userFromProfilePicture, commentElement.children.item(0));
 
@@ -275,8 +275,8 @@ function createContentElement(content) {
         (<HTMLImageElement>img).removeAttribute('height');
         (<HTMLImageElement>img).removeAttribute('width');
 
-        networkGetImgo(object).then(blob => {
-            let url = URL.createObjectURL(blob);
+        networkGetImgo(object).then(b64 => {
+            let url = `data:image/jpeg;base64,${b64}`;
             (<HTMLImageElement>img).src = url;
 
             img.addEventListener('click', function () {

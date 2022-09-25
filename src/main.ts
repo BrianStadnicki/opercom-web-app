@@ -11,8 +11,8 @@ export async function hydrate() {
 
     // set self profile picture
     const selfProfilePicture = <HTMLImageElement>document.getElementById('profile-picture-self');
-    networkGetUserProfilePicture(localStorage.getItem("user-id"), "HR64x64").then(blob => {
-        selfProfilePicture.src = URL.createObjectURL(blob);
+    networkGetUserProfilePicture(localStorage.getItem("user-id"), "HR64x64").then(b64 => {
+        selfProfilePicture.src = `data:image/jpeg;base64,${b64}`;
     })
     selfProfilePicture.title = localStorage.getItem("user-name");
 
