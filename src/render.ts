@@ -267,8 +267,6 @@ function createContentElement(content) {
         (<HTMLImageElement>img).style.maxWidth = "80%";
         (<HTMLImageElement>img).style.maxHeight = "25vh";
         (<HTMLImageElement>img).style.objectFit = "scale-down";
-        (<HTMLImageElement>img).style.width = "";
-        (<HTMLImageElement>img).style.height = "";
         (<HTMLImageElement>img).removeAttribute('height');
         (<HTMLImageElement>img).removeAttribute('width');
 
