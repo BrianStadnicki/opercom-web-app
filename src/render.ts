@@ -23,9 +23,6 @@ export function renderChat(chat) {
         document.getElementById('chat-messages').style.display = 'none';
         document.getElementById('no-posts-exist').style.display = 'block';
     }
-
-    // auto-scroll div to bottom
-    document.getElementById("chat-view-box").scrollTop = document.getElementById("chat-view-box").scrollHeight
 }
 
 function renderPost(post) {
