@@ -1,16 +1,9 @@
 import {networkGetTeamsList, networkGetSocket, networkGetUserProperties} from "./network";
 
 export async function init() {
-    setCookies();
     await getUserProperties(true);
     await getTeams(true);
     // setupSync().then(() => {});
-}
-
-function setCookies() {
-    document.cookie = `skypetoken_asm=${localStorage.getItem("skype-token")}`;
-    document.cookie = `authtoken=${encodeURIComponent(localStorage.getItem("auth-token"))}%26Origin%3Dhttps%3A%2F%2Fteams.microsoft.com`;
-    document.cookie = "platformid_asm=1415";
 }
 
 async function getUserProperties(checkExists) {
