@@ -9,8 +9,8 @@ export class HTML extends Post {
         let content = createContentElement(info['content']);
 
         let userFromProfilePicture = document.createElement('img');
-        userFromProfilePicture.width = 32;
-        userFromProfilePicture.height = 32;
+        userFromProfilePicture.width = 64;
+        userFromProfilePicture.height = 64;
         userFromProfilePicture.classList.add("post-profile-image");
         networkGetUserProfilePicture(info['from'].substring(info['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(b64 => {
             userFromProfilePicture.src = `data:image/jpeg;base64,${b64}`;
@@ -29,12 +29,10 @@ export class HTML extends Post {
                     <p>${moment(info['composetime'], moment.HTML5_FMT.DATETIME_LOCAL_MS).format("dddd, Do MMMM YYYY, h:mm:ss a")}</p>
                 </div>
             </div>
-            <hr>
             ${info['properties']['title'] !== undefined ? `<h3><b>${info['properties']['title']}</b></h3>` : ''}
             ${info['properties']['subject'] !== undefined ? `<h6><b>${info['properties']['subject']}</b></h6>` : ''}
         `;
-
-        postElement.children.item(0).insertBefore(userFromProfilePicture, postElement.children.item(0).children.item(0));
+        postElement.insertBefore(userFromProfilePicture, postElement.children.item(0));
         postElement.appendChild(content);
 
         if (info['properties'].hasOwnProperty('files')) {
