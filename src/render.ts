@@ -46,7 +46,7 @@ function renderPost(post) {
 
 function renderComments(comments) {
     let commentsElement = document.createElement('div');
-    commentsElement.classList.add("comments-div")
+    commentsElement.classList.add("comments")
     commentsElement.innerHTML = `
         <a href="#comments-${cssValidID(comments[0]['conversationLink'])}" class="comments-dropdown" role="button" aria-expanded="false">
             Expand ${comments.length} comments

@@ -1,5 +1,9 @@
 @import "colours";
 
+@mixin postTextContent() {
+
+}
+
 #chat-view-box {
 
   #no-posts-exist {
@@ -16,68 +20,139 @@
 
   .post {
     display: grid;
-    border-color: $colour-1;
-    border-style: solid;
-    border-radius: 5px;
-    border-width: 5px;
-    padding: 5px;
-    margin-top: 5px;
+    grid-template-columns: 64px auto;
+    column-gap: 5px;
+    padding: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+    word-break: break-all;
 
-    .post-profile-image {
+    .profile-image {
       grid-column: 1;
-      grid-row: 1 / 4;
-      margin-top: auto;
-      margin-bottom: auto;
+      grid-row: 1;
+      pointer-events: none;
     }
 
-    .post-header {
-      grid-column: 2 / 12;
+    .main {
+      grid-column: 2;
+      grid-row: 1;
+      border: red 5px solid;
+
+      .header {
+
+        display: flex;
+        flex-direction: row;
+        border-bottom: red 2px solid;
+        padding: 5px;
+
+        .name {
+          margin-top: 0;
+          margin-bottom: 0;
+          vertical-align: super;
+          font-size: larger;
+          font-weight: bold;
+        }
+
+        .dates {
+          margin-left: auto;
+          text-align: right;
+          vertical-align: super;
+
+          .from-now {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: medium;
+          }
+
+          .sent {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: small;
+          }
+        }
+
+      }
+
+      .content {
+        margin: 5px;
+
+        .title {
+          font-size: x-large;
+          margin-block: 10px;
+        }
+
+        .subject {
+          font-size: large;
+          margin-block: 10px;
+        }
+      }
+
+      .files {
+        margin-top: 20px;
+        margin-bottom: 5px;
+        padding: 5px;
+
+        .file {
+          border: blue 2px dashed;
+          padding: 5px;
+          text-decoration: none;
+        }
+      }
+
+    }
+
+    .comments {
+      grid-column: 2;
       grid-row: 2;
-      display: flex;
-      flex-direction: row;
+      padding: 5px;
+      border: blue 5px solid;
 
-      .post-name {
-        display: block;
-        vertical-align: super;
-        font-size: large;
-      }
+      .collapse {
 
-      hr {
-        display: block;
-      }
+        margin-top: 5px;
+        padding-top: 5px;
+        border-top: blue 5px solid;
 
-      .post-date {
-        margin-left: auto;
-        vertical-align: super;
+        .comment {
+          display: grid;
+          grid-template-columns: 36px auto;
+          border: none;
 
-        h4 {
-          text-align: right;
-          font-size: medium;
-          margin-top: 0;
-          margin-bottom: 0;
-        }
+          .profile-image {
+            grid-column: 1;
+            grid-row: 1;
+            pointer-events: none;
+          }
 
-        p {
-          text-align: right;
-          font-size: small;
-          margin-top: 0;
-          margin-bottom: 0;
+          .main {
+            grid-column: 2;
+            grid-row: 1;
+            border: none;
+
+            .header {
+              border: none;
+              padding: 0;
+
+              .name {
+                font-size: large;
+                font-weight: bold;
+              }
+            }
+
+            .content {
+              margin-left: 0;
+            }
+          }
         }
       }
     }
 
-    h6 {
-      font-size: x-large;
-      margin-top: 5px;
-      margin-bottom: 10px;
-    }
+  }
 
+  .post, .comment {
     .post-text-content {
-      grid-column: 2 / 12;
-      grid-row: 3;
       display: flex;
       flex-direction: column;
-
       word-break: break-word;
       box-sizing: border-box;
 
@@ -112,7 +187,6 @@
         padding-top: 0;
         padding-bottom: 0;
         vertical-align: top;
-
         word-break: initial;
         white-space: initial;
 
@@ -122,86 +196,6 @@
         }
       }
     }
-
-    .post-files {
-      grid-column: 2 / 12;
-      grid-row: 4;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 15px;
-      margin-top: 15px;
-
-      a {
-        color: black;
-        text-decoration: none;
-        border-color: $colour-2;
-        border-style: solid;
-        border-radius: 5px;
-        padding: 5px;
-      }
-    }
-
-    .comments-div {
-      grid-column: 2 / 12;
-      grid-row: 5;
-    }
-
-    .comments-dropdown {
-      display: block;
-      text-decoration: none;
-      color: $colour-3;
-      background-color: $colour-5;
-      border-radius: 5px;
-      text-align: center;
-      margin-top: 5px;
-      margin-bottom: 5px;
-    }
-
-    .comment {
-      grid-column: 1 / 12;
-      border-color: $colour-4;
-      border-style: solid;
-      border-radius: 5px;
-      padding: 5px;
-
-      .comment-profile-picture {
-        display: inline-block;
-        margin-right: 5px;
-      }
-
-      .comment-name {
-        display: inline-block;
-        vertical-align: super;
-        font-size: large;
-      }
-
-      .comment-date {
-        float: right;
-
-        p {
-          display: inline;
-          font-size: small;
-          margin-top: 0;
-          margin-bottom: 0;
-          padding-right: 15px;
-        }
-
-        h4 {
-          display: inline;
-          font-size: medium;
-          margin-top: 0;
-          margin-bottom: 0;
-        }
-      }
-
-    }
-
-    .comment:not(:last-child) {
-      margin-bottom: 5px;
-    }
-
   }
 
 }

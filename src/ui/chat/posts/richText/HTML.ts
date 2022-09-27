@@ -6,50 +6,63 @@ import {createContentElement} from "../../Content";
 
 export class HTML extends Post {
     render(info: object, comments?: HTMLElement): HTMLElement {
-        let content = createContentElement(info['content']);
-
-        let userFromProfilePicture = document.createElement('img');
-        userFromProfilePicture.width = 64;
-        userFromProfilePicture.height = 64;
-        userFromProfilePicture.classList.add("post-profile-image");
-        networkGetUserProfilePicture(info['from'].substring(info['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(b64 => {
-            userFromProfilePicture.src = `data:image/jpeg;base64,${b64}`;
-        });
+        let contentElement = createContentElement(info['content']);
+        let dateFromNow = moment(info['composetime'], moment.HTML5_FMT.DATETIME_LOCAL_MS).fromNow();
+        let dateSent = moment(info['composetime'], moment.HTML5_FMT.DATETIME_LOCAL_MS).format("dddd, Do MMMM YYYY, h:mm:ss a");
+        let title = info['properties']['title'] !== undefined ? `<h3 class="title"><b>${info['properties']['title']}</b></h3>` : '';
+        let subject = info['properties']['subject'] !== undefined ? `<h6 class="subject"><b>${info['properties']['subject']}</b></h6>` : '';
+        let senderName = info['imdisplayname'];
 
         let postElement = document.createElement('div');
         postElement.id = `post-${info['conversationLink']}`;
         postElement.classList.add('post');
-        postElement.style.width = 'auto';
         postElement.style.wordBreak = "break-all";
         postElement.innerHTML = `
-            <div class="post-header">
-                <div class="post-name">${info['imdisplayname']}</div>
-                <div class="post-date">
-                    <h4>${moment(info['composetime'], moment.HTML5_FMT.DATETIME_LOCAL_MS).fromNow()}</h4>
-                    <p>${moment(info['composetime'], moment.HTML5_FMT.DATETIME_LOCAL_MS).format("dddd, Do MMMM YYYY, h:mm:ss a")}</p>
+            <img src="" width="64" height="64" class="profile-image" alt="${senderName}">
+            
+            <div class="main">
+            
+                <div class="header">
+                    <p class="name">${senderName}</p>
+                    <div class="dates">
+                        <p class="from-now">${dateFromNow}</p>
+                        <p class="sent">${dateSent}</p>
+                    </div>
                 </div>
+                
+                <div class="content">
+                    ${title}
+                    ${subject}
+                    <div class="main-content-placeholder">Placeholder</div>
+                </div>
+                
+                ${info['properties'].hasOwnProperty('files') === false ? '' :`
+                    <div class="files">
+                        ${
+                            JSON.parse(info['properties']['files']).map(file => `
+                                <a class="file" href="${file['objectUrl']}" target="_blank">${file['title']}</a>
+                            `).join('')
+                        }
+                    </div>
+                `}
+                
             </div>
-            ${info['properties']['title'] !== undefined ? `<h3><b>${info['properties']['title']}</b></h3>` : ''}
-            ${info['properties']['subject'] !== undefined ? `<h6><b>${info['properties']['subject']}</b></h6>` : ''}
+            
+            <div class="comments"></div>
         `;
-        postElement.insertBefore(userFromProfilePicture, postElement.children.item(0));
-        postElement.appendChild(content);
 
-        if (info['properties'].hasOwnProperty('files')) {
-            let files = JSON.parse(info['properties']['files']);
+        postElement.getElementsByClassName("content").item(0).replaceChild(contentElement,
+            postElement.getElementsByClassName("main-content-placeholder").item(0));
 
-            let filesElement = document.createElement('div');
-            filesElement.classList.add('post-files');
-            filesElement.innerHTML = `${
-                files.map(file => `
-                    <a href="${file['objectUrl']}" target="_blank">${file['title']}</a>
-                `).join('')
-            }`;
+        networkGetUserProfilePicture(info['from'].substring(info['from'].indexOf("/contacts/") + "/contacts/".length), "HR64x64").then(b64 => {
+            (<HTMLImageElement>postElement.getElementsByClassName("profile-image").item(0)).src = `data:image/jpeg;base64,${b64}`;
+        });
 
-            postElement.appendChild(filesElement);
+        if (comments !== undefined) {
+            postElement.replaceChild(comments, postElement.getElementsByClassName("comments").item(0));
+        } else {
+            postElement.removeChild(postElement.getElementsByClassName("comments").item(0));
         }
-
-        if (comments !== undefined) postElement.appendChild(comments);
 
         return postElement;
     }
