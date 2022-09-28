@@ -1,6 +1,6 @@
 import {cssValidID} from "./utils";
 import {networkGetConversation, networkGetUserProfilePicture} from "./network";
-import {renderChat} from "./render";
+import {switchToChat} from "./ui/chat/ChatView";
 
 let mainActive = false;
 
@@ -111,10 +111,10 @@ function switchChatView(chat, putInHistory) {
         networkGetConversation(chat, 20, 1)
             .then(conversations => {
                 localStorage.setItem(chat, JSON.stringify(conversations));
-                renderChat(chat);
+                switchToChat(chat);
             });
     } else {
-        renderChat(chat);
+        switchToChat(chat);
     }
 }
 

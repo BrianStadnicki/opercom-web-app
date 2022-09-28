@@ -1,12 +1,10 @@
-import {cssValidID, groupByKey} from "./utils";
-// @ts-ignore
-import moment = require("moment");
-import {MediaCard} from "./ui/chat/posts/richText/MediaCard";
-import {HTML} from "./ui/chat/posts/richText/HTML";
-import {Text} from "./ui/chat/posts/Text";
-import {Comment} from "./ui/chat/Comment";
+import {cssValidID, groupByKey} from "../../utils";
+import {MediaCard} from "./posts/richText/MediaCard";
+import {HTML} from "./posts/richText/HTML";
+import {Text} from "./posts/Text";
+import {Comment} from "./Comment";
 
-export function renderChat(chat) {
+export function switchToChat(chat) {
     document.getElementById('chat-messages').style.display = 'block';
     document.getElementById('no-posts-exist').style.display = 'none';
 
@@ -28,6 +26,7 @@ export function renderChat(chat) {
         document.getElementById('no-posts-exist').style.display = 'block';
     }
 }
+
 
 function renderPost(post) {
     let parent = post["length"] > 1 ? post[post["length"] - 1] : post[0];
