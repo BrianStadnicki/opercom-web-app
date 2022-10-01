@@ -1,6 +1,9 @@
 <script lang="ts">
     import TeamsSidebar from "./TeamsSidebar.svelte";
     import ChatBox from "./ChatBox.svelte";
+    import {NetworkManager} from "./NetworkManager";
+
+    export let networkManager: NetworkManager;
 
     let channel = "";
 
@@ -12,7 +15,7 @@
 
 <div>
     <TeamsSidebar on:message={handleEvent}></TeamsSidebar>
-    <ChatBox channel={channel}></ChatBox>
+    <ChatBox channel={channel} networkManager={networkManager}></ChatBox>
 </div>
 
 <style lang="scss">

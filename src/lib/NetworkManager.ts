@@ -1,4 +1,6 @@
-import {fetch} from "@tauri-apps/api/http";
+import {Body, fetch} from "@tauri-apps/api/http";
+import type {HttpVerb} from "@tauri-apps/api/http";
+import type {DataSideTeam} from "./Types";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
@@ -16,7 +18,7 @@ export class NetworkManager {
         this.email = email;
     }
 
-    fetchGenerate(domain: Domain, path: string) {
+    fetchGenerate(domain: Domain, path: string, method: HttpVerb = "GET", body: string = "") {
         switch (domain) {
             case Domain.TEAMS_MICROSOFT_COM:
                 return fetch(`https://teams.microsoft.com${path}`, {
@@ -29,14 +31,17 @@ export class NetworkManager {
                         "x-skypetoken": this.skypeToken,
                         "x-anchormailbox": this.email
                     },
-                    "method": "GET"
+                    "method": method,
+                    "body": Body.text(body)
                 })
+
             case Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM:
                 return fetch(`https://uk.ng.msg.teams.microsoft.com${path}`, {
                     "headers": {
                         "authentication": `skypetoken=${this.skypeToken}`
                     },
-                    "method": "GET"
+                    "method": method,
+                    "body": Body.text(body)
                 })
         }
     }
@@ -46,13 +51,11 @@ export class NetworkManager {
             .then(res => res.data);
     }
 
-    async getTeamsList() {
+    async getTeamsList(): Promise<DataSideTeam[]> {
         return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, "/v1/users/ME/conversations")
         .then(res => res.data)
         .then(json => {
-            let res = {
-                "teams": []
-            };
+            let res: DataSideTeam[] = [];
 
             json['conversations'].forEach(conversation => {
                 if (conversation['threadProperties']['threadType'] === 'space' &&
@@ -75,7 +78,7 @@ export class NetworkManager {
                         })
                     }
 
-                    res['teams'].push(
+                    res.push(
                         {
                             "id": conversation["id"],
                             "name": conversation['threadProperties']['spaceThreadTopic'],
@@ -87,5 +90,13 @@ export class NetworkManager {
 
             return res;
         });
+    }
+
+    async getConversation(thread, messages, startTime, syncState?) {
+        return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, `/v1/users/ME/conversations/${
+            encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}${
+            syncState === undefined ? '' : `&syncState=${syncState}`}`)
+
+            .then(res => res.data);
     }
 }

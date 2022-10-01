@@ -1,10 +1,8 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
+    import type {DataSideTeamChannel} from "../Types";
 
-    export let channel: {
-        id: string,
-        name: string,
-    };
+    export let channel: DataSideTeamChannel;
 
     export let active: boolean;
 
@@ -17,7 +15,7 @@
         dispatch('message', {
             channel: channel.id
         })
-    };
+    }
 
 </script>
 

@@ -43,7 +43,7 @@
     <AuthScreen></AuthScreen>
   {:else}
     {#await initialise() then _}
-      <MainScreen></MainScreen>
+      <MainScreen networkManager={networkManager}></MainScreen>
     {/await}
   {/if}
 </main>

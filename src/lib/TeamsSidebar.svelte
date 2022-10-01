@@ -1,8 +1,9 @@
 <script lang="ts">
     import Team from "./sidebar/Team.svelte";
     import {createEventDispatcher} from "svelte";
+    import type {DataSideTeam} from "./Types";
 
-    let teams: [object] = JSON.parse(localStorage.getItem("teams"))["teams"];
+    let teams: DataSideTeam[] = JSON.parse(localStorage.getItem("teams"));
     let activeChannel = "";
 
     let dispatch = createEventDispatcher();

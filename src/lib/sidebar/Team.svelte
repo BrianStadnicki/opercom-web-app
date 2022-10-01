@@ -1,18 +1,9 @@
 <script lang="ts">
-    export let team: {
-        id: string,
-        name: string,
-        channels: [
-            {
-                id: string,
-                name: string
-            }
-        ]
-    };
-
-    export let activeChannel: string;
-
     import Channel from "./Channel.svelte";
+    import type {DataSideTeam} from "../Types";
+
+    export let team: DataSideTeam;
+    export let activeChannel: string;
 
     let teamChannelsVisibility = false;
 
