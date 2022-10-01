@@ -1,4 +1,5 @@
 <script lang="ts">
+    import loadingGIF from "../../assets/loading.gif";
     import type {DataMessage} from "../Types";
 
     export let id: string;
@@ -13,7 +14,11 @@
 </script>
 
 <div class="post">
-    <img src={senderPhoto} width="64" height="64">
+    {#await senderPhoto}
+        <img src={loadingGIF} width="64" height="64" class="profile-image">
+    {:then photo}
+        <img src={photo} width="64" height="64" class="profile-image">
+    {/await}
 
     <div class="main">
 

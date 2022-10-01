@@ -30,7 +30,7 @@
     {#if channelData !== null && channelData !== undefined}
         {#each Object.values(groupByKey(channelData.messages, 'conversationLink')).reverse() as post}
             {#if post[post.length - 1].messagetype === "RichText/Html"}
-                <HTMLPost post={post}></HTMLPost>
+                <HTMLPost post={post} networkManager={networkManager}></HTMLPost>
             {/if}
         {/each}
     {/if}
