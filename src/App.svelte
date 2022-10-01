@@ -10,7 +10,11 @@
     !localStorage.getItem("email");
 
   async function initialise() {
-    networkManager = new NetworkManager();
+    networkManager = new NetworkManager(
+            localStorage.getItem("skype-token"),
+            localStorage.getItem("auth-token"),
+            localStorage.getItem("email")
+    );
 
     if (localStorage.getItem("user-id") === null ||
         localStorage.getItem("user-name") === null ||

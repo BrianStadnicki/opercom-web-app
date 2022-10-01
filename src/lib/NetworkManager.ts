@@ -10,10 +10,10 @@ export class NetworkManager {
     authToken: string;
     email: string;
 
-    constructor() {
-        this.skypeToken = localStorage.getItem("skype-token");
-        this.authToken = localStorage.getItem("auth-token");
-        this.email = localStorage.getItem("email");
+    constructor(skypeToken: string, authToken: string, email: string) {
+        this.skypeToken = skypeToken;
+        this.authToken = authToken;
+        this.email = email;
     }
 
     fetchGenerate(domain: Domain, path: string) {
