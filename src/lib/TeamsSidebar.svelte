@@ -1,11 +1,16 @@
 <script lang="ts">
     import Team from "./sidebar/Team.svelte";
+    import {createEventDispatcher} from "svelte";
 
     let teams: [object] = JSON.parse(localStorage.getItem("teams"))["teams"];
     let activeChannel = "";
 
+    let dispatch = createEventDispatcher();
+
     function handleEvent(event) {
         activeChannel = event.detail.channel;
+
+        dispatch('message', event.detail);
     }
 
 </script>
