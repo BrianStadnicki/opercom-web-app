@@ -2,22 +2,17 @@
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
     "beforeBuildCommand": "yarn run build",
-    "beforeDevCommand": "yarn run start",
-    "devPath": "http://localhost:1234",
-    "distDir": "../dist"
+    "beforeDevCommand": "yarn run dev",
+    "devPath": "http://localhost:5173",
+    "distDir": "../build"
   },
   "package": {
-    "productName": "web-app",
+    "productName": "opercom",
     "version": "0.1.0"
   },
   "tauri": {
     "allowlist": {
-      "all": true,
-      "http": {
-        "all": true,
-        "request": true,
-        "scope": ["https://*.microsoft.com/**", "https://*.skype.com/**"]
-      }
+      "all": true
     },
     "bundle": {
       "active": true,
@@ -34,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.opercom.client",
+      "identifier": "com.tauri.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -53,7 +48,7 @@
       }
     },
     "security": {
-      "csp": ""
+      "csp": null
     },
     "updater": {
       "active": false
