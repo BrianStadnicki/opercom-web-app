@@ -215,9 +215,12 @@ export async function networkGetTeamsList() {
  * @param thread thread
  * @param messages number of messages to fetch
  * @param startTime start time
+ * @param syncState sync state
  */
-export async function networkGetConversation(thread, messages, startTime) {
-    return await fetchFromProxy(`https://uk.ng.msg.teams.microsoft.com/v1/users/ME/conversations/${encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}`, {
+export async function networkGetConversation(thread, messages, startTime, syncState?) {
+    return await fetchFromProxy(`https://uk.ng.msg.teams.microsoft.com/v1/users/ME/conversations/${
+        encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}${
+        syncState === undefined ? '' : `&syncState=${syncState}`}`, {
         "headers": {
             "authentication": `skypetoken=${localStorage.getItem("skype-token")}`
         },

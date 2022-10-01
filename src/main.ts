@@ -1,6 +1,6 @@
-import {cssValidID} from "./utils";
+import {cssValidID, groupByKey} from "./utils";
 import {networkGetConversation, networkGetUserProfilePicture} from "./network";
-import {switchToChat} from "./ui/chat/ChatView";
+import {renderPost, switchToChat} from "./ui/chat/ChatView";
 
 let mainActive = false;
 
@@ -40,7 +40,35 @@ export async function hydrate() {
         e.stopPropagation();
     }
 
+    document.getElementById('chat-view-box').addEventListener('scroll', function(e) {
+        if (!fetchingMessages && (<HTMLDivElement>e.target).scrollTop < 400) {
+            fetchingMessages = true;
+            let currentJSON = JSON.parse(localStorage.getItem(currentActiveChat));
+            let backwardLink = currentJSON["_metadata"]["backwardLink"];
+            let params = new URLSearchParams(backwardLink.substring(backwardLink.indexOf("?") + 1));
+            networkGetConversation(currentActiveChat, params.get("pageSize"), params.get("startTime"), params.get("syncState"))
+                .then(conversation => {
+                    currentJSON["_metadata"] = conversation["_metadata"];
+                    currentJSON["messages"] = conversation["messages"].concat(currentJSON["messages"]);
+                    localStorage.setItem(currentActiveChat, JSON.stringify(currentJSON));
+
+                    Object.values(groupByKey(conversation["messages"], 'conversationLink'))
+                        .reverse()
+                        .forEach(post => {
+                            let rendered = renderPost(post);
+                            if (rendered !== undefined) {
+                                document.getElementById('chat-messages').prepend(rendered);
+                            }
+                        });
+
+                    fetchingMessages = false;
+                });
+        }
+    });
+
 }
+
+let fetchingMessages = false;
 
 function createTeamsListItem(team) {
     let res = document.createElement('div');

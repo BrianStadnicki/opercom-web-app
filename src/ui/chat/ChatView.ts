@@ -27,8 +27,7 @@ export function switchToChat(chat) {
     }
 }
 
-
-function renderPost(post) {
+export function renderPost(post) {
     let parent = post["length"] > 1 ? post[post["length"] - 1] : post[0];
     let comments = post.length > 1 ? renderComments(post.slice(0, post.length - 1).reverse()) : undefined;
 
