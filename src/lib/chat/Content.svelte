@@ -36,11 +36,14 @@
             networkManager.getImgo(object).then(b64 => {
                 let url = `data:image/jpeg;base64,${b64}`;
                 (<HTMLImageElement>img).src = url;
-
+                // TODO: add enlarging images
+                /*
                 img.addEventListener('click', function () {
                     (<HTMLImageElement>document.getElementById('enlarged-image')).src = url;
                     document.getElementById('enlarged-image-modal').style.display = "flex";
                 });
+
+                 */
             })
         });
 
