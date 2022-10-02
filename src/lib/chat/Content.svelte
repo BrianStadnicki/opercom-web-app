@@ -63,5 +63,50 @@
 </div>
 
 <style lang="scss">
+  .content {
+    display: flex;
+    flex-direction: column;
+    word-break: break-word;
+    box-sizing: border-box;
 
+    div {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    p {
+      margin-block: 0;
+    }
+
+    .post-text-content-mention {
+      display: contents;
+      width: fit-content;
+      color: $colour-3;
+      background-color: $colour-2;
+      border-radius: 5px;
+      font-weight: bolder;
+    }
+
+    ul {
+      padding-top: 0;
+      padding-bottom: 0;
+      list-style-type: disc;
+    }
+
+    li {
+      display: list-item;
+      padding-top: 0;
+      padding-bottom: 0;
+      vertical-align: top;
+      word-break: initial;
+      white-space: initial;
+
+      ul {
+        margin-top: 1.5em;
+        margin-bottom: 0;
+      }
+    }
+  }
 </style>
