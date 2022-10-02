@@ -25,7 +25,3 @@
 >
     <Content content={parent.content} networkManager={networkManager}></Content>
 </Post>
-
-<style lang="scss">
-
-</style>
