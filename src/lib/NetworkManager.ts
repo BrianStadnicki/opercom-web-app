@@ -4,7 +4,8 @@ import type {DataSideTeam} from "./Types";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
-    REGION_NG_MSG_TEAMS_MICROSOFT_COM
+    REGION_NG_MSG_TEAMS_MICROSOFT_COM,
+    REGION_ASYNCGW_TEAMS_MICROSOFT_COM
 }
 
 export class NetworkManager {
@@ -56,7 +57,17 @@ export class NetworkManager {
                         "authentication": `skypetoken=${this.skypeToken}`
                     },
                     "method": method,
-                    "body": Body.text(body)
+                    "body": Body.text(body),
+                    "responseType": responseType
+                })
+            case Domain.REGION_ASYNCGW_TEAMS_MICROSOFT_COM:
+                return fetch(`https://uk-prod.asyncgw.teams.microsoft.com${path}`, {
+                    "headers": {
+                        "authorization": `skype_token ${localStorage.getItem("skype-token")}`
+                    },
+                    "method": method,
+                    "body": Body.text(body),
+                    "responseType": responseType
                 })
         }
     }
@@ -128,6 +139,21 @@ export class NetworkManager {
                 this.addToImageCache(`user-profile-picture-${user}-${size}`, b64);
                 return b64;
             })
+    }
+
+    async getImgo(object) {
+        let cached = this.checkImageCache(`imgo-${object}`);
+        if (cached) {
+            return cached;
+        }
+
+        return await this.fetchGenerate(Domain.REGION_ASYNCGW_TEAMS_MICROSOFT_COM, `/v1/objects/${object}/views/imgo?v=1`, "GET", "", ResponseType.Binary)
+            // @ts-ignore
+            .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
+            .then(b64 => {
+                this.addToImageCache(`imgo-${object}`, b64);
+                return b64;
+            });
     }
 
     checkImageCache(image) {

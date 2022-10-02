@@ -3,6 +3,7 @@
     import type {DataMessage} from "../Types";
     import moment from "moment";
     import {NetworkManager} from "../NetworkManager";
+    import Content from "./Content.svelte";
 
     export let post: DataMessage[];
     export let networkManager: NetworkManager;
@@ -22,7 +23,7 @@
     files={parent.properties.files === undefined ? undefined : JSON.parse(parent.properties.files)}
     comments={post.length > 1 ? post.slice(0, post.length - 1) : []}
 >
-    {@html parent.content}
+    <Content content={parent.content} networkManager={networkManager}></Content>
 </Post>
 
 <style lang="scss">
