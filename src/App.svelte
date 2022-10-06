@@ -13,7 +13,10 @@
     networkManager = new NetworkManager(
             localStorage.getItem("skype-token"),
             localStorage.getItem("auth-token"),
-            localStorage.getItem("email")
+            localStorage.getItem("email"),
+            () => {
+              needAuth = true;
+            }
     );
 
     if (localStorage.getItem("user-id") === null ||

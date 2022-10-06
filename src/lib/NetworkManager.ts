@@ -1,5 +1,5 @@
 import type {HttpVerb} from "@tauri-apps/api/http";
-import {Body, fetch, ResponseType} from "@tauri-apps/api/http";
+import {Body, fetch, Response, ResponseType} from "@tauri-apps/api/http";
 import type {DataSideTeam} from "./Types";
 
 enum Domain {
@@ -12,19 +12,81 @@ export class NetworkManager {
     skypeToken: string;
     authToken: string;
     email: string;
+    reauth: () => void;
 
-    constructor(skypeToken: string, authToken: string, email: string) {
+    networkUp:boolean = true;
+    waitingForNetworkCallbacks:(() => Promise<void>)[] = [];
+
+    constructor(skypeToken: string, authToken: string, email: string, reauth: () => void) {
         this.skypeToken = skypeToken;
         this.authToken = authToken;
         this.email = email;
+        this.reauth = reauth;
     }
 
-    fetchGenerate(domain: Domain, path: string, method: HttpVerb = "GET", body: string = "", responseType: ResponseType = ResponseType.JSON) {
+    private async fetchWrapper(url, fetchOptions): Promise<Response<any>> {
+        console.log("fetching")
+        console.log(url);
+        console.log(fetchOptions)
+        let promiseFunction = (resolve, reject) => {
+            if (this.networkUp) {
+                fetch(url, fetchOptions)
+                    .then((response: Response<any>) => {
+                        console.log(response);
+                        if (response.status === 401) {
+                            this.reauth();
+                            throw Error("Unauthorized");
+                        }
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log(error, url, fetchOptions);
+                        if (this.networkUp) {
+                            this.networkUp = false;
+
+                            this.waitingForNetworkCallbacks.push(async function () {
+                                promiseFunction(resolve, reject);
+                            });
+
+                            let waitForInternet = function (_resolve, _reject) {
+                                fetch('https://teams.microsoft.com', { method: "GET" })
+                                    .then(() => {
+                                        _resolve();
+                                    })
+                                    .catch(() => {
+                                        new Promise(res => setTimeout(res, 3000))
+                                            .then(() => waitForInternet(_resolve, _reject));
+                                    });
+                            };
+
+                            new Promise<void>(waitForInternet)
+                                .then(async () => {
+                                    this.networkUp = true;
+
+                                    this.waitingForNetworkCallbacks.forEach(callback => {
+                                        callback();
+                                    });
+
+                                    this.waitingForNetworkCallbacks = [];
+                                });
+                        } else {
+                            this.waitingForNetworkCallbacks.push(async function () {
+                                promiseFunction(resolve, reject);
+                            });
+                        }
+                    })
+            }
+        };
+
+        return new Promise(promiseFunction);
+    }
+
+    private fetchGenerate(domain: Domain, path: string, method: HttpVerb = "GET", body: string = "", responseType: ResponseType = ResponseType.JSON) {
         switch (domain) {
             case Domain.TEAMS_MICROSOFT_COM:
                 switch (responseType) {
                     case ResponseType.JSON:
-                        return fetch(`https://teams.microsoft.com${path}`, {
+                        return this.fetchWrapper(`https://teams.microsoft.com${path}`, {
                             "headers": {
                                 "origin": "https://teams.microsoft.com",
                                 "host": "https://teams.microsoft.com",
@@ -40,7 +102,7 @@ export class NetworkManager {
                             "responseType": responseType
                         })
                     case ResponseType.Binary:
-                        return fetch(`https://teams.microsoft.com${path}`, {
+                        return this.fetchWrapper(`https://teams.microsoft.com${path}`, {
                             "headers": {
                                 "referer": "https://teams.microsoft.com/_",
                                 "authority": "teams.microsoft.com",
@@ -52,7 +114,7 @@ export class NetworkManager {
                 }
                 break;
             case Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM:
-                return fetch(`https://uk.ng.msg.teams.microsoft.com${path}`, {
+                return this.fetchWrapper(`https://uk.ng.msg.teams.microsoft.com${path}`, {
                     "headers": {
                         "authentication": `skypetoken=${this.skypeToken}`
                     },
@@ -61,7 +123,7 @@ export class NetworkManager {
                     "responseType": responseType
                 })
             case Domain.REGION_ASYNCGW_TEAMS_MICROSOFT_COM:
-                return fetch(`https://uk-prod.asyncgw.teams.microsoft.com${path}`, {
+                return this.fetchWrapper(`https://uk-prod.asyncgw.teams.microsoft.com${path}`, {
                     "headers": {
                         "authorization": `skype_token ${localStorage.getItem("skype-token")}`
                     },
@@ -156,14 +218,14 @@ export class NetworkManager {
             });
     }
 
-    checkImageCache(image) {
+    private checkImageCache(image) {
         if (localStorage.getItem(`cache-image-${image}`) !== undefined) {
             return localStorage.getItem(`cache-image-${image}`);
         }
         return false;
     }
 
-    addToImageCache(image, b64) {
+    private addToImageCache(image, b64) {
         localStorage.setItem(`cache-image-${image}`, b64);
     }
 }
