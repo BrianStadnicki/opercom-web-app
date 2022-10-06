@@ -108,5 +108,16 @@
         margin-bottom: 0;
       }
     }
+
+    :global(td) {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 5px;
+      word-break: keep-all;
+    }
+
+    :global(table) {
+      border-collapse: collapse;
+    }
   }
 </style>
