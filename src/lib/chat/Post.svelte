@@ -52,7 +52,14 @@
         {/if}
 
         {#if comments.length !== 0}
-            <div class="comments">
+            <details class="comments">
+                <summary>
+                    {#if comments.length === 1}
+                        1 comment
+                    {:else}
+                        {comments.length} comments
+                    {/if}
+                </summary>
                 {#each comments
                     .sort((a, b) => moment(a.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).diff(moment(b.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS)))
                         as comment (comment.id)}
@@ -61,7 +68,7 @@
                         <Content content={comment.content} networkManager={networkManager}></Content>
                     </Comment>
                 {/each}
-            </div>
+            </details>
         {/if}
     </div>
 </div>
@@ -152,7 +159,7 @@
         grid-column: 2;
         grid-row: 2;
 
-        padding: 10px;
+        padding: 5px;
         border-top: red solid;
       }
 
