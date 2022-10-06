@@ -2,6 +2,7 @@
     import {NetworkManager} from "./NetworkManager";
     import type {DataChannel} from "./Types";
     import HTMLPost from "./chat/HTMLPost.svelte";
+    import moment from "moment";
 
     export let networkManager: NetworkManager;
     export let channel: string = "";
@@ -28,7 +29,8 @@
 
 <div>
     {#if channelData !== null && channelData !== undefined}
-        {#each Object.values(groupByKey(channelData.messages, 'conversationLink')).reverse() as post}
+        {#each Object.values(groupByKey(channelData.messages, 'conversationLink'))
+            .sort((a, b) => moment(a[a.length-1].composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).diff(moment(b[b.length-1].composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS))) as post}
             {#if post[post.length - 1].messagetype === "RichText/Html"}
                 <HTMLPost post={post} networkManager={networkManager}></HTMLPost>
             {/if}
