@@ -1,6 +1,9 @@
 <script lang="ts">
     import loadingGIF from "../../assets/loading.gif";
     import type {DataMessage} from "../Types";
+    import Comment from "./Comment.svelte";
+    import Content from "./Content.svelte";
+    import moment from "moment";
 
     export let id: string;
     export let senderName: string;
@@ -11,6 +14,7 @@
     export let subject: string;
     export let files: object[];
     export let comments: DataMessage[];
+    export let networkManager;
 </script>
 
 <div class="post">
@@ -44,6 +48,19 @@
         {#if files !== undefined}
             <div class="files">
 
+            </div>
+        {/if}
+
+        {#if comments.length !== 0}
+            <div class="comments">
+                {#each comments
+                    .sort((a, b) => moment(a.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).diff(moment(b.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS)))
+                        as comment (comment.id)}
+
+                    <Comment message={comment} networkManager={networkManager}>
+                        <Content content={comment.content} networkManager={networkManager}></Content>
+                    </Comment>
+                {/each}
             </div>
         {/if}
     </div>
@@ -129,6 +146,14 @@
           padding: 5px;
           text-decoration: none;
         }
+      }
+
+      .comments {
+        grid-column: 2;
+        grid-row: 2;
+
+        padding: 10px;
+        border-top: red solid;
       }
 
     }

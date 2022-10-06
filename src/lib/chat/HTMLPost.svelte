@@ -21,7 +21,8 @@
     title={parent.properties.title}
     subject={parent.properties.subject}
     files={parent.properties.files === undefined ? undefined : JSON.parse(parent.properties.files)}
-    comments={post.length > 1 ? post.slice(0, post.length - 1) : []}
+    comments={post.length > 1 ? post.slice(0, post.length - 1).reverse() : []}
+    networkManager={networkManager}
 >
     <Content content={parent.content} networkManager={networkManager}></Content>
 </Post>
