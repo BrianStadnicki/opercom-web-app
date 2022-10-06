@@ -5,28 +5,20 @@
     export let team: DataSideTeam;
     export let activeChannel: string;
 
-    let teamChannelsVisibility = false;
-
-    function toggleChannelList() {
-        teamChannelsVisibility = !teamChannelsVisibility;
-    }
-
 </script>
 
-<div class="team">
-    <a type="button" on:click={toggleChannelList}>{team.name}</a>
-    <div class:teamChannelsVisibility>
-        {#each team.channels as channel}
-            <Channel channel={channel} on:message active={activeChannel === channel.id}></Channel>
-        {/each}
-    </div>
-</div>
+<details class="team">
+    <summary>{team.name}</summary>
+    {#each team.channels as channel}
+        <Channel channel={channel} on:message active={activeChannel === channel.id}></Channel>
+    {/each}
+</details>
 
 <style lang="scss">
     .team {
       margin-bottom: 5px;
 
-      a {
+      summary {
         color: $colour-1;
         background-color: $colour-5;
         display: block;
