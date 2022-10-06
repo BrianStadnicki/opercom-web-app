@@ -58,29 +58,29 @@
 
 </script>
 
-<div class="content" bind:this={contentElement}>
+<div class="post-text-content" bind:this={contentElement}>
 
 </div>
 
 <style lang="scss">
-  .content {
+  :global(.post-text-content) {
     display: flex;
     flex-direction: column;
     word-break: break-word;
     box-sizing: border-box;
 
-    div {
+    :global(div) {
       margin-top: 0;
       margin-bottom: 0;
       padding-top: 0;
       padding-bottom: 0;
     }
 
-    p {
+    :global(p) {
       margin-block: 0;
     }
 
-    .post-text-content-mention {
+    :global(.post-text-content-mention) {
       display: contents;
       width: fit-content;
       color: $colour-3;
@@ -89,13 +89,13 @@
       font-weight: bolder;
     }
 
-    ul {
+    :global(ul) {
       padding-top: 0;
       padding-bottom: 0;
       list-style-type: disc;
     }
 
-    li {
+    :global(li) {
       display: list-item;
       padding-top: 0;
       padding-bottom: 0;
@@ -103,7 +103,7 @@
       word-break: initial;
       white-space: initial;
 
-      ul {
+      :global(ul) {
         margin-top: 1.5em;
         margin-bottom: 0;
       }
