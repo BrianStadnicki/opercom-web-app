@@ -1,20 +1,6 @@
 {
-  "compilerOptions": {
-    "experimentalDecorators": true,
-    "jsxImportSource": "preact",
-    "sourceMap": true,
-    "rootDir": "src",
-    "outDir": "dist",
-    "lib": [
-      "dom",
-      "es5",
-      "scripthost",
-      "es2015.promise",
-      "es2017.object"
-    ],
-    "module": "es2022"
-  },
-  "exclude": [
-    "node_modules"
-  ]
+  "extends": "@tsconfig/svelte/tsconfig.json",
+
+  "include": ["src/**/*", "src/node_modules"],
+  "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
 }
