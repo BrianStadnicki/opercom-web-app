@@ -154,7 +154,7 @@
 
       .content {
         margin: 5px;
-        max-height: 30vh;
+        max-height: 20vh;
         overflow: hidden;
 
         .title {
