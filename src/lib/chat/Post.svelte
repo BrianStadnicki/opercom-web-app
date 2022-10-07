@@ -59,7 +59,13 @@
         </div>
 
         {#if showMoreBtn}
-            <button class:showMoreBtn on:click={toggle}>Show more...</button>
+            <button class="showMoreBtn" on:click={toggle}>
+                {#if !showAll}
+                    Expand
+                {:else}
+                    Hide
+                {/if}
+            </button>
         {/if}
 
         {#if files !== undefined}
