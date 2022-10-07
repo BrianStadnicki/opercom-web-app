@@ -64,7 +64,7 @@
 
         {#if files !== undefined}
             <div class="files">
-
+                Files placeholder...
             </div>
         {/if}
 
