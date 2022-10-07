@@ -4,6 +4,7 @@
     import Comment from "./Comment.svelte";
     import Content from "./Content.svelte";
     import moment from "moment";
+    import {onMount} from "svelte";
 
     export let id: string;
     export let senderName: string;
@@ -15,6 +16,18 @@
     export let files: object[];
     export let comments: DataMessage[];
     export let networkManager;
+
+    let content: HTMLDivElement;
+    let showMoreBtn: boolean;
+    let showAll: boolean;
+
+    onMount(() => {
+        showMoreBtn = content.offsetHeight < content.scrollHeight;
+    });
+
+    function toggle() {
+        showAll = !showAll;
+    }
 </script>
 
 <div class="post">
@@ -34,7 +47,7 @@
             </div>
         </div>
 
-        <div class="content">
+        <div class="content" bind:this={content} class:showAll>
             {#if title !== undefined}
                 <h3 class="title">{title}</h3>
             {/if}
@@ -44,6 +57,10 @@
 
             <slot></slot>
         </div>
+
+        {#if showMoreBtn}
+            <button class:showMoreBtn on:click={toggle}>Show more...</button>
+        {/if}
 
         {#if files !== undefined}
             <div class="files">
@@ -131,6 +148,8 @@
 
       .content {
         margin: 5px;
+        max-height: 30vh;
+        overflow: hidden;
 
         .title {
           font-size: x-large;
@@ -141,6 +160,15 @@
           font-size: large;
           margin-block: 10px;
         }
+      }
+
+      .content.showAll {
+        max-height: none;
+      }
+
+      .showMoreBtn {
+        display: block;
+        width: 100%;
       }
 
       .files {
