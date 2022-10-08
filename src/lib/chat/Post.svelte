@@ -32,9 +32,9 @@
 
 <div class="post">
     {#await senderPhoto}
-        <img src={loadingGIF} width="48" height="48" class="profile-image">
+        <img src={loadingGIF} width="48" height="48" class="profile-image" alt="loading...">
     {:then photo}
-        <img src={photo} width="48" height="48" class="profile-image">
+        <img src={photo} width="48" height="48" class="profile-image" alt={senderName}>
     {/await}
 
     <div class="main">
