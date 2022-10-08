@@ -31,13 +31,5 @@
       a:hover {
         background-color: $colour-4;
       }
-
-      div {
-        display: none;
-      }
-
-      div.teamChannelsVisibility {
-        display: block;
-      }
     }
 </style>
