@@ -78,9 +78,9 @@
             <details class="comments">
                 <summary>
                     {#if comments.length === 1}
-                        1 comment
+                        1 reply
                     {:else}
-                        {comments.length} comments
+                        {comments.length} replies
                     {/if}
                 </summary>
                 {#each comments
