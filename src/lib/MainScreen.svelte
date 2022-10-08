@@ -23,6 +23,6 @@
         display: grid;
         grid-template-columns: 200px 1fr;
         column-gap: 10px;
-        height: 95vh;
+        height: 98vh;
     }
 </style>

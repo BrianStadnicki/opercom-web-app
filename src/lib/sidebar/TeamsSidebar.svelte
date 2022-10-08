@@ -26,7 +26,6 @@
   div {
     grid-column: 1 / 2;
     overflow-y: scroll;
-    max-height: 95vh;
     background-color: $colour-1;
   }
 </style>
