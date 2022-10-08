@@ -9,7 +9,8 @@
 
 <details class="team">
     <summary>{team.name}</summary>
-    {#each team.channels as channel}
+    {#each team.channels.sort((a, b) => a.id === team.id ? -1 : a.name.localeCompare(b.name))
+            as channel}
         <Channel channel={channel} on:message active={activeChannel === channel.id}></Channel>
     {/each}
 </details>
