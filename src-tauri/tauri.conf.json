@@ -16,6 +16,9 @@
         "all": true,
         "request": true,
         "scope": ["https://*teams.microsoft.com/*", "https://*skype.com/*"]
+      },
+      "shell": {
+        "open": true
       }
     },
     "bundle": {
