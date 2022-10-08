@@ -38,7 +38,8 @@ export interface DataMessage {
         cards?: string,
         subject?: string,
         title?: string,
-        files?: string
+        files?: string,
+        deletetime?: number
     }
     sequenceId: number,
     type: string,

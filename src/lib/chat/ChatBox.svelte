@@ -29,7 +29,10 @@
 
 <div>
     {#if channelData !== null && channelData !== undefined}
-        {#each Object.values(groupByKey(channelData.messages, 'conversationLink'))
+        {#each Object.values(groupByKey(
+            channelData.messages
+                .filter(message => message.properties["deletetime"] === undefined)
+            , 'conversationLink'))
             .sort((a, b) => moment(b[b.length-1].composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).diff(moment(a[a.length-1].composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS)))
                 as post (post[post.length-1].id)}
             {#if post[post.length - 1].messagetype === "RichText/Html"}
