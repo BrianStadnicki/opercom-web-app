@@ -32,9 +32,9 @@
 
 <div class="post">
     {#await senderPhoto}
-        <img src={loadingGIF} width="64" height="64" class="profile-image">
+        <img src={loadingGIF} width="48" height="48" class="profile-image">
     {:then photo}
-        <img src={photo} width="64" height="64" class="profile-image">
+        <img src={photo} width="48" height="48" class="profile-image">
     {/await}
 
     <div class="main">
@@ -99,7 +99,7 @@
 <style lang="scss">
   .post {
     display: grid;
-    grid-template-columns: 64px auto;
+    grid-template-columns: 48px auto;
     column-gap: 5px;
     padding: 2px;
     margin-left: 10px;
