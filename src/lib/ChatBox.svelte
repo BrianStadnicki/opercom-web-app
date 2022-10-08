@@ -45,5 +45,6 @@
         overflow-y: scroll;
         max-height: 95vh;
         padding-bottom: 10px;
+        scroll-behavior: smooth;
     }
 </style>
