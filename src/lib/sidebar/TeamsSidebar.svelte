@@ -27,5 +27,6 @@
     grid-column: 1 / 2;
     overflow-y: auto;
     background-color: $colour-1;
+    scroll-behavior: smooth;
   }
 </style>
