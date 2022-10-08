@@ -25,7 +25,7 @@
 <style lang="scss">
   div {
     grid-column: 1 / 2;
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: $colour-1;
   }
 </style>

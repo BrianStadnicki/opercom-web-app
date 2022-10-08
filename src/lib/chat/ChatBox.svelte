@@ -42,10 +42,10 @@
     {/if}
 </div>
 
-<style>
+<style lang="scss">
     div {
         grid-column: 2 / 3;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding-bottom: 10px;
         scroll-behavior: smooth;
     }
