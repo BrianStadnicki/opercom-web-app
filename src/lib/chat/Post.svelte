@@ -1,6 +1,6 @@
 <script lang="ts">
     import loadingGIF from "../../assets/loading.gif";
-    import type {DataMessage} from "../Types";
+    import type {DataFile, DataMessage} from "../Types";
     import Comment from "./Comment.svelte";
     import Content from "./Content.svelte";
     import moment from "moment";
@@ -13,7 +13,7 @@
     export let dateSent: string;
     export let title: string;
     export let subject: string;
-    export let files: object[];
+    export let files: DataFile[];
     export let comments: DataMessage[];
     export let networkManager;
 
@@ -70,7 +70,9 @@
 
         {#if files !== undefined}
             <div class="files">
-                Files placeholder...
+                {#each files as file}
+                    <a class="file" href={file.fileInfo.fileUrl} target="_blank">{file.fileName}</a>
+                {/each}
             </div>
         {/if}
 
@@ -181,6 +183,7 @@
         margin-top: 20px;
         margin-bottom: 5px;
         padding: 5px;
+        width: fit-content;
 
         .file {
           border: blue 2px dashed;

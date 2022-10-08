@@ -45,3 +45,29 @@ export interface DataMessage {
     type: string,
     version: string,
 }
+
+export interface DataFile {
+    "@type": string,
+    baseUrl: string,
+    botFileProperties: object,
+    fileChicletState: {
+        serviceName: string,
+        state: string
+    },
+    fileInfo: {
+        fileUrl: string,
+        serverRelativeUrl: string,
+        siteUrl: string,
+    },
+    fileName: string,
+    filePreview: object,
+    fileType: string,
+    id: string,
+    itemid: string,
+    objectUrl: string,
+    providerData: string,
+    sourceOfFile: number,
+    state: string,
+    title: string,
+    type: string
+}
