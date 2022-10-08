@@ -1,6 +1,6 @@
 <script lang="ts">
-    import TeamsSidebar from "./TeamsSidebar.svelte";
-    import ChatBox from "./ChatBox.svelte";
+    import TeamsSidebar from "./sidebar/TeamsSidebar.svelte";
+    import ChatBox from "./chat/ChatBox.svelte";
     import {NetworkManager} from "./NetworkManager";
 
     export let networkManager: NetworkManager;

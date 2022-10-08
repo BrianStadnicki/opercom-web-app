@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {NetworkManager} from "./NetworkManager";
-    import type {DataChannel} from "./Types";
-    import HTMLPost from "./chat/HTMLPost.svelte";
+    import {NetworkManager} from "../NetworkManager";
+    import type {DataChannel} from "../Types";
+    import HTMLPost from "./HTMLPost.svelte";
     import moment from "moment";
 
     export let networkManager: NetworkManager;
