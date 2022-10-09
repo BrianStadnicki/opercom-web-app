@@ -39,6 +39,7 @@
             networkManager.getConversation(channel, 20, params.get("startTime"), params.get("syncState"))
                 .then(data => {
                     data.messages = data.messages.filter(message => !channelData.messages.some(message2 => message2.id === message.id));
+                    channelData._metadata = data._metadata;
                     if (data.messages.length !== 0) {
                         channelData.messages = [...channelData.messages, ...data.messages];
                         localStorage.setItem(`channel-${channel}`, JSON.stringify(channelData));
