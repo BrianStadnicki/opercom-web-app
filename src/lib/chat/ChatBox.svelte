@@ -56,7 +56,7 @@
 </script>
 
 <div bind:this={scrollDiv} on:scroll={handleScroll}>
-    {#if channelData !== undefined}
+    {#if channelData !== null && channelData !== undefined}
         {#each Object.values(groupByKey(
                 channelData.messages
                 .filter(message => message.properties["deletetime"] === undefined)
