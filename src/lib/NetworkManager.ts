@@ -1,6 +1,6 @@
 import type {HttpVerb} from "@tauri-apps/api/http";
 import {Body, fetch, Response, ResponseType} from "@tauri-apps/api/http";
-import type {DataSideTeam} from "./Types";
+import type {DataChannel, DataSideTeam} from "./Types";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
@@ -180,7 +180,7 @@ export class NetworkManager {
         });
     }
 
-    async getConversation(thread, messages, startTime, syncState?) {
+    async getConversation(thread, messages, startTime, syncState?): Promise<DataChannel> {
         return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, `/v1/users/ME/conversations/${
             encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}${
             syncState === undefined ? '' : `&syncState=${syncState}`}`)
