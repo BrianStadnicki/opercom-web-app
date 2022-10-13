@@ -50,11 +50,10 @@
     let atEnd = false;
     function handleScroll() {
         if (!scrolledToBottom && scrollDiv.scrollTop === scrollDiv.scrollHeight - scrollDiv.offsetHeight) {
-            if (postsEnd < posts.length) {
+            if (postsEnd < posts.length - 1) {
                 postsEnd += posts.length - postsEnd < 20 ? posts.length - postsEnd - 1 : 20;
-            } else if (!atEnd && channelData._metadata.backwardLink != undefined) {
+            } else if (!atEnd && channelData._metadata.backwardLink !== undefined) {
                 scrolledToBottom = true;
-
                 let params = new URL(channelData._metadata.backwardLink).searchParams;
                 networkManager.getConversation(channel, 20, params.get("startTime"), params.get("syncState"))
                     .then(data => {
