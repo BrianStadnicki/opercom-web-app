@@ -1,12 +1,22 @@
 export interface DataSideTeam {
     id: string,
     name: string,
+    pictureETag: string,
+    isFavorite: boolean,
+    isCollapsed: boolean,
+    isDeleted: boolean,
+    isArchived: boolean
     channels: DataSideTeamChannel[]
 }
 
 export interface DataSideTeamChannel {
     id: string,
-    name: string
+    name: string,
+    isGeneral: boolean,
+    isFavorite: boolean,
+    isDeleted: boolean,
+    isPinned: boolean,
+    isArchived: boolean
 }
 
 export interface DataChannel {

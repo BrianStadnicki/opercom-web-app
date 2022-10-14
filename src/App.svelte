@@ -7,13 +7,15 @@
 
   let needAuth = !localStorage.getItem("skype-token") ||
     !localStorage.getItem("auth-token") ||
-    !localStorage.getItem("email");
+    !localStorage.getItem("email") ||
+    !localStorage.getItem("chatspaces-token");
 
   async function initialise() {
     networkManager = new NetworkManager(
             localStorage.getItem("skype-token"),
             localStorage.getItem("auth-token"),
             localStorage.getItem("email"),
+            localStorage.getItem("chatspaces-token"),
             () => {
               needAuth = true;
             }

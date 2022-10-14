@@ -1,6 +1,6 @@
 import type {HttpVerb} from "@tauri-apps/api/http";
 import {Body, fetch, Response, ResponseType} from "@tauri-apps/api/http";
-import type {DataChannel, DataSideTeam} from "./Types";
+import type {DataChannel, DataSideTeam, DataSideTeamChannel} from "./Types";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
@@ -11,15 +11,17 @@ enum Domain {
 export class NetworkManager {
     skypeToken: string;
     authToken: string;
+    chatSpacesToken: string;
     email: string;
     reauth: () => void;
 
     networkUp:boolean = true;
     waitingForNetworkCallbacks:(() => Promise<void>)[] = [];
 
-    constructor(skypeToken: string, authToken: string, email: string, reauth: () => void) {
+    constructor(skypeToken: string, authToken: string, email: string, chatSpacesToken: string, reauth: () => void) {
         this.skypeToken = skypeToken;
         this.authToken = authToken;
+        this.chatSpacesToken = chatSpacesToken;
         this.email = email;
         this.reauth = reauth;
     }
@@ -140,44 +142,35 @@ export class NetworkManager {
     }
 
     async getTeamsList(): Promise<DataSideTeam[]> {
-        return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, "/v1/users/ME/conversations")
-        .then(res => res.data)
-        .then(json => {
-            let res: DataSideTeam[] = [];
-
-            json['conversations'].forEach(conversation => {
-                if (conversation['threadProperties']['threadType'] === 'space' &&
-                    !conversation['threadProperties']['isdeleted']) {
-                    let channels = [
-                        {
-                            "id": conversation['id'],
-                            "name": "General"
-                        }
-                    ];
-
-                    if (conversation['threadProperties']['topics']) {
-                        JSON.parse(conversation['threadProperties']['topics']).forEach(topic => {
-                            if (!topic['isdeleted']) {
-                                channels.push({
-                                    "id": topic['id'],
-                                    "name": topic['name']
-                                })
-                            }
-                        })
-                    }
-
-                    res.push(
-                        {
-                            "id": conversation["id"],
-                            "name": conversation['threadProperties']['spaceThreadTopic'],
-                            "channels": channels
-                        }
-                    );
-                }
-            })
-
-            return res;
-        });
+        return this.fetchWrapper(`https://teams.microsoft.com/api/csa/uk/api/v1/teams/users/me?isPrefetch=false&enableMembershipSummary=true`, {
+            "headers": {
+                "host": "teams.microsoft.com",
+                "authorization": `Bearer ${this.chatSpacesToken}`,
+                "x-skypetoken": this.skypeToken,
+            },
+            "method": "GET"
+        })
+            .then(res => res.data)
+            .then(json => {
+                return json["teams"].map(team => <DataSideTeam>{
+                    channels: team["channels"].map(channel => <DataSideTeamChannel>{
+                        id: channel["id"],
+                        name: channel["displayName"],
+                        isGeneral: channel["isGeneral"],
+                        isFavorite: channel["isFavorite"],
+                        isDeleted: channel["isDeleted"],
+                        isArchived: channel["isArchived"],
+                        isPinned: channel["isPinned"]
+                    }),
+                    id: team["id"],
+                    isArchived: team["isArchived"],
+                    isCollapsed: team["isCollapsed"],
+                    isDeleted: team["isDeleted"],
+                    isFavorite: team["isFavorite"],
+                    name: team["displayName"],
+                    pictureETag: team["pictureETag"]
+                });
+            });
     }
 
     async getConversation(thread, messages, startTime, syncState?): Promise<DataChannel> {

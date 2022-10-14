@@ -2,7 +2,8 @@
     function handleSubmit(e) {
         let tokens = <string[]>JSON.parse(e.target.elements["tokens"].value);
         localStorage.setItem("skype-token", tokens['skype']);
-        localStorage.setItem("auth-token", tokens['token']);
+        localStorage.setItem("auth-token", tokens['main-token']);
+        localStorage.setItem("chatspaces-token", tokens['chatspaces-token'])
         localStorage.setItem("email", tokens['email']);
     }
 </script>
@@ -14,7 +15,7 @@
             <div>
                 <p>Open the console in Teams and paste in the following:</p>
                 <code>
-                    document&period;body&period;innerHTML &equals; &grave;Copy and paste the following into OperCom&colon;&lt;br&gt;&lt;span&gt;&dollar;&lcub;JSON&period;stringify&lpar;&lcub;&apos;skype&apos;&colon;document&period;cookie&period;split&lpar;&apos;&semi; &apos;&rpar;&period;find&lpar;&lpar;row&rpar; &equals;&gt; row&period;startsWith&lpar;&apos;skypetoken&lowbar;asm&equals;&apos;&rpar;&rpar;&quest;&period;split&lpar;&apos;&equals;&apos;&rpar;&lsqb;1&rsqb;&comma;&apos;token&apos;&colon;&apos;Bearer &apos;&plus;JSON&period;parse&lpar;localStorage&period;getItem&lpar;Object&period;keys&lpar;localStorage&rpar;&period;filter&lpar;key &equals;&gt; key&period;startsWith&lpar;&quot;ts&period;&quot;&rpar; &amp;&amp; key&period;endsWith&lpar;&quot;https&colon;&sol;&sol;api&period;spaces&period;skype&period;com&quot;&rpar;&rpar;&rpar;&rpar;&period;token&comma;&apos;email&apos;&colon;JSON&period;parse&lpar;localStorage&period;getItem&lpar;&apos;ts&period;userInfo&apos;&rpar;&rpar;&lsqb;&apos;email&apos;&rsqb;&rcub;&rpar;&rcub;&lt;&sol;span&gt;&grave;&semi;&NewLine;                    </code>
+                    document&period;body&period;innerHTML &equals; &grave;Copy and paste the following into OperCom&colon;&lt;br&gt;&lt;span&gt;&dollar;&lcub;JSON&period;stringify&lpar;&lcub;&apos;skype&apos;&colon;document&period;cookie&period;split&lpar;&apos;&semi; &apos;&rpar;&period;find&lpar;&lpar;row&rpar; &equals;&gt; row&period;startsWith&lpar;&apos;skypetoken&lowbar;asm&equals;&apos;&rpar;&rpar;&quest;&period;split&lpar;&apos;&equals;&apos;&rpar;&lsqb;1&rsqb;&comma;&apos;main-token&apos;&colon;&apos;Bearer &apos;&plus;JSON&period;parse&lpar;localStorage&period;getItem&lpar;Object&period;keys&lpar;localStorage&rpar;&period;filter&lpar;key &equals;&gt; key&period;startsWith&lpar;&quot;ts&period;&quot;&rpar; &amp;&amp; key&period;endsWith&lpar;&quot;https&colon;&sol;&sol;api&period;spaces&period;skype&period;com&quot;&rpar;&rpar;&rpar;&rpar;&period;token&comma;&apos;email&apos;&colon;JSON&period;parse&lpar;localStorage&period;getItem&lpar;&apos;ts&period;userInfo&apos;&rpar;&rpar;&lsqb;&apos;email&apos;&rsqb;&comma;&apos;chatspaces-token&apos;&colon; JSON&period;parse&lpar;localStorage&period;getItem&lpar;Object&period;keys&lpar;localStorage&rpar;&period;filter&lpar;key &equals;&gt; &sol;ts&period;&ast;&period;cache&period;token&period;https&colon;&bsol;&sol;&bsol;&sol;chatsvcagg&period;teams&period;microsoft&period;com&sol;&period;test&lpar;key&rpar;&rpar;&rpar;&rpar;&period;token&rcub;&rpar;&rcub;&lt;&sol;span&gt;&grave;&semi;                </code>
                 <p>Paste the result below</p>
             </div>
         </div>
