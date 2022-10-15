@@ -3,14 +3,17 @@
     import type {DataChannel, DataMessage} from "../Types";
     import moment from "moment";
     import RegularPost from "./RegularPost.svelte";
+    import type {Writable} from "svelte/store";
 
     export let networkManager: NetworkManager;
-    export let channel: string = "";
+    export let activeChannel: Writable<string>;
 
+    let currentChannel: string = "";
     let channelData: DataChannel;
 
-    async function init(channel) {
+    activeChannel.subscribe(async channel => {
         if (channel !== "") {
+            currentChannel = channel;
             channelData = null;
             if (localStorage.getItem(`channel-${channel}`) === null) {
                 await networkManager.getConversation(channel, 20, 0)
@@ -24,9 +27,7 @@
             scrolledToBottom = false;
             atEnd = false;
         }
-    }
-
-    $: init(channel);
+    })
 
     let posts: DataMessage[][];
     let postsEnd: number;
@@ -55,13 +56,13 @@
             } else if (!atEnd && channelData._metadata.backwardLink !== undefined) {
                 scrolledToBottom = true;
                 let params = new URL(channelData._metadata.backwardLink).searchParams;
-                networkManager.getConversation(channel, 20, params.get("startTime"), params.get("syncState"))
+                networkManager.getConversation(currentChannel, 20, params.get("startTime"), params.get("syncState"))
                     .then(data => {
                         data.messages = data.messages.filter(message => !channelData.messages.some(message2 => message2.id === message.id));
                         channelData._metadata = data._metadata;
                         if (data.messages.length !== 0) {
                             channelData.messages = [...channelData.messages, ...data.messages];
-                            localStorage.setItem(`channel-${channel}`, JSON.stringify(channelData));
+                            localStorage.setItem(`channel-${currentChannel}`, JSON.stringify(channelData));
                         } else {
                             atEnd = true;
                         }

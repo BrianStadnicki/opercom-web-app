@@ -1,9 +1,10 @@
 <script lang="ts">
     import Channel from "./Channel.svelte";
     import type {DataSideTeam} from "../Types";
+    import type {Writable} from "svelte/store";
 
     export let team: DataSideTeam;
-    export let activeChannel: string;
+    export let activeChannel: Writable<string>;
 
 </script>
 
@@ -11,7 +12,7 @@
     <summary>{team.name}</summary>
     {#each team.channels.sort((a, b) => a.isGeneral ? -1 : a.name.localeCompare(b.name))
             as channel}
-        <Channel channel={channel} on:message active={activeChannel === channel.id}></Channel>
+        <Channel channel={channel} on:message activeChannel={activeChannel}></Channel>
     {/each}
 </details>
 

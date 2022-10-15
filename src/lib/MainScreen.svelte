@@ -2,20 +2,16 @@
     import TeamsSidebar from "./sidebar/TeamsSidebar.svelte";
     import ChatBox from "./chat/ChatBox.svelte";
     import {NetworkManager} from "./NetworkManager";
+    import {writable} from "svelte/store";
 
     export let networkManager: NetworkManager;
 
-    let channel = "";
-
-    function handleEvent(event) {
-        channel = event.detail.channel;
-    }
-
+    const activeChannel = writable("");
 </script>
 
 <div>
-    <TeamsSidebar on:message={handleEvent}></TeamsSidebar>
-    <ChatBox channel={channel} networkManager={networkManager}></ChatBox>
+    <TeamsSidebar activeChannel={activeChannel}></TeamsSidebar>
+    <ChatBox activeChannel={activeChannel} networkManager={networkManager}></ChatBox>
 </div>
 
 <style lang="scss">

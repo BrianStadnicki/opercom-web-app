@@ -1,22 +1,18 @@
 <script lang="ts">
-    import {createEventDispatcher} from "svelte";
     import type {DataSideTeamChannel} from "../Types";
+    import type {Writable} from "svelte/store";
 
     export let channel: DataSideTeamChannel;
+    export let activeChannel: Writable<string>;
 
-    export let active: boolean;
-
-    let dispatch = createEventDispatcher();
-
-    let selected = false;
+    let active = false;
+    activeChannel.subscribe(value => {
+        active = value === channel.id;
+    })
 
     function clicked() {
-        selected = true;
-        dispatch('message', {
-            channel: channel.id
-        })
+        activeChannel.set(channel.id);
     }
-
 </script>
 
 <a on:click={clicked} class:active>{channel.name}</a>
