@@ -1,23 +1,33 @@
 <script lang="ts">
     import Team from "./Team.svelte";
-    import type {DataSideTeam} from "../Types";
     import type {Writable} from "svelte/store";
+    import {DataManager} from "../DataManager";
+    import type {DataSideTeam} from "../Types";
 
-    let teams: DataSideTeam[] = JSON.parse(localStorage.getItem("teams"));
+    export let dataManager: DataManager;
     export let activeChannel: Writable<string>;
+
+    let teams: DataSideTeam[];
+
+    dataManager.getChannels().then(channelsStore => {
+        channelsStore.subscribe(data => {
+            teams = data;
+        })
+    })
 </script>
 
 <div>
-    {#each teams.filter(team => team.isFavorite) as team}
-        <Team team={team} activeChannel={activeChannel}></Team>
-    {/each}
-    <details>
-        <summary>Hidden</summary>
-        {#each teams.filter(team => !team.isFavorite && !team.isArchived) as team}
+    {#if teams !== undefined}
+        {#each teams.filter(team => team.isFavorite) as team}
             <Team team={team} activeChannel={activeChannel}></Team>
         {/each}
-    </details>
-
+        <details>
+            <summary>Hidden</summary>
+            {#each teams.filter(team => !team.isFavorite && !team.isArchived) as team}
+                <Team team={team} activeChannel={activeChannel}></Team>
+            {/each}
+        </details>
+    {/if}
 </div>
 
 <style lang="scss">

@@ -1,4 +1,4 @@
-import type {DataChannel} from "./Types";
+import type {DataChannel, DataSideTeam} from "./Types";
 import type {Writable} from "svelte/store";
 import {get, writable} from "svelte/store";
 import type {NetworkManager} from "./NetworkManager";
@@ -7,16 +7,36 @@ export class DataManager {
 
     private networkManager: NetworkManager;
 
-    private channels: Map<string, Writable<DataChannel>>;
+    private channelsMeta: Writable<DataSideTeam[]>;
+    private channelsData: Map<string, Writable<DataChannel>>;
 
     constructor(networkManager: NetworkManager) {
         this.networkManager = networkManager;
-        this.channels = new Map<string, Writable<DataChannel>>();
+        this.channelsData = new Map<string, Writable<DataChannel>>();
+    }
+
+    async getChannels(): Promise<Writable<DataSideTeam[]>> {
+        if (this.channelsMeta === undefined) {
+            let stored = localStorage.getItem("teams");
+            if (stored !== undefined) {
+                this.channelsMeta = writable(JSON.parse(stored));
+            } else {
+                await this.networkManager.getTeamsList().then(list => {
+                    this.channelsMeta = writable(list);
+                });
+            }
+
+            this.channelsMeta.subscribe(data => {
+                localStorage.setItem("teams", JSON.stringify(data));
+            });
+        }
+
+        return this.channelsMeta;
     }
 
     async getChannel(id: string): Promise<Writable<DataChannel>> {
-        if (this.channels.has(id)) {
-            return this.channels.get(id);
+        if (this.channelsData.has(id)) {
+            return this.channelsData.get(id);
 
         } else {
             let rawChannelData: string = localStorage.getItem(`channel-${id}`);
@@ -32,7 +52,7 @@ export class DataManager {
             channel.subscribe(data => {
                 localStorage.setItem(`channel-${id}`, JSON.stringify(data));
             })
-            this.channels.set(id, channel);
+            this.channelsData.set(id, channel);
 
             return channel;
         }

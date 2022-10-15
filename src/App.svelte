@@ -37,13 +37,6 @@
         });
     }
 
-    if (localStorage.getItem("teams") === null) {
-      await networkManager.getTeamsList()
-        .then(res => {
-          localStorage.setItem("teams", JSON.stringify(res));
-        });
-    }
-
     if (localStorage.getItem("apps") === null) {
       await networkManager.getApps()
               .then(res => {

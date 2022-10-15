@@ -12,7 +12,7 @@
 </script>
 
 <div>
-    <TeamsSidebar activeChannel={activeChannel}></TeamsSidebar>
+    <TeamsSidebar dataManager={dataManager} activeChannel={activeChannel}></TeamsSidebar>
     <ChatBox dataManager={dataManager} activeChannel={activeChannel} networkManager={networkManager}></ChatBox>
 </div>
 
