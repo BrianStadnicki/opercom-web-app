@@ -1,8 +1,8 @@
 <script lang="ts">
     import {NetworkManager} from "../NetworkManager";
     import type {DataChannel, DataMessage} from "../Types";
-    import HTMLPost from "./HTMLPost.svelte";
     import moment from "moment";
+    import RegularPost from "./RegularPost.svelte";
 
     export let networkManager: NetworkManager;
     export let channel: string = "";
@@ -79,8 +79,8 @@
 <div bind:this={scrollDiv} on:scroll={handleScroll}>
     {#if posts !== undefined}
         {#each posts.slice(0, postsEnd) as post (post[post.length-1].id)}
-            {#if post[post.length - 1].messagetype === "RichText/Html"}
-                <HTMLPost post={post} networkManager={networkManager}></HTMLPost>
+            {#if post[post.length - 1].messagetype === "RichText/Html" || post[post.length - 1].messagetype === "Text"}
+                <RegularPost post={post} networkManager={networkManager}></RegularPost>
             {/if}
         {/each}
     {/if}
