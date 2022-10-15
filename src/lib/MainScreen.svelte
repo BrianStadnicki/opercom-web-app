@@ -3,7 +3,9 @@
     import ChatBox from "./chat/ChatBox.svelte";
     import {NetworkManager} from "./NetworkManager";
     import {writable} from "svelte/store";
+    import {DataManager} from "./DataManager";
 
+    export let dataManager: DataManager;
     export let networkManager: NetworkManager;
 
     const activeChannel = writable("");
@@ -11,7 +13,7 @@
 
 <div>
     <TeamsSidebar activeChannel={activeChannel}></TeamsSidebar>
-    <ChatBox activeChannel={activeChannel} networkManager={networkManager}></ChatBox>
+    <ChatBox dataManager={dataManager} activeChannel={activeChannel} networkManager={networkManager}></ChatBox>
 </div>
 
 <style lang="scss">

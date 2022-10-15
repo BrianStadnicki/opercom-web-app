@@ -4,8 +4,10 @@
   import {NetworkManager} from "./lib/NetworkManager";
   import {AdaptiveCard} from "adaptivecards";
   import MarkdownIt from "markdown-it";
+  import {DataManager} from "./lib/DataManager";
 
-  let networkManager;
+  let dataManager: DataManager;
+  let networkManager: NetworkManager;
 
   let needAuth = !localStorage.getItem("skype-token") ||
     !localStorage.getItem("auth-token") ||
@@ -48,6 +50,9 @@
                 localStorage.setItem("apps", JSON.stringify(res));
               })
     }
+
+    dataManager = new DataManager(networkManager);
+
     return;
   }
 
@@ -62,7 +67,7 @@
     <AuthScreen></AuthScreen>
   {:else}
     {#await initialise() then _}
-      <MainScreen networkManager={networkManager}></MainScreen>
+      <MainScreen dataManager={dataManager} networkManager={networkManager}></MainScreen>
     {/await}
   {/if}
 </main>

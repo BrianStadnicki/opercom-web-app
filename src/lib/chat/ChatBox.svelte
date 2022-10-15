@@ -3,37 +3,38 @@
     import type {DataChannel, DataMessage} from "../Types";
     import moment from "moment";
     import RegularPost from "./RegularPost.svelte";
-    import type {Writable} from "svelte/store";
+    import type {Unsubscriber, Writable} from "svelte/store";
     import AdaptiveCardPost from "./AdaptiveCardPost.svelte";
+    import {DataManager} from "../DataManager";
 
+    export let dataManager: DataManager;
     export let networkManager: NetworkManager;
     export let activeChannel: Writable<string>;
 
     let currentChannel: string = "";
     let channelData: DataChannel;
 
+    let channelSubscription: Unsubscriber;
+
     activeChannel.subscribe(async channel => {
         if (channel !== "") {
             currentChannel = channel;
-            channelData = null;
-            if (localStorage.getItem(`channel-${channel}`) === null) {
-                await networkManager.getConversation(channel, 20, 0)
-                    .then(data => {
-                        channelData = data;
-                        localStorage.setItem(`channel-${channel}`, JSON.stringify(channelData));
-                    })
-            } else {
-                channelData = JSON.parse(localStorage.getItem(`channel-${channel}`));
-            }
             scrolledToBottom = false;
             atEnd = false;
+
+            if (channelSubscription !== undefined) {
+                channelSubscription();
+            }
+
+            channelSubscription = (await dataManager.getChannel(channel)).subscribe(dataChannel => {
+                channelData = dataChannel;
+                renderPosts(dataChannel);
+            });
         }
     })
 
     let posts: DataMessage[][];
     let postsEnd: number;
-
-    $: renderPosts(channelData);
 
     function renderPosts(data: DataChannel) {
         if (data !== undefined && data !== null) {
@@ -46,10 +47,14 @@
             postsEnd = posts.length > 20 ? 20 : posts.length;
 
             setTimeout(function () {
-                if (postsEnd < posts.length - 1) {
-                    postsEnd += posts.length - postsEnd < 20 ? posts.length - postsEnd - 1 : 20;
-                } else if (!atEnd && scrollDiv.offsetHeight === scrollDiv.scrollHeight && channelData._metadata.backwardLink !== undefined) {
-                    getMoreMessages();
+                if (scrollDiv.offsetHeight === scrollDiv.scrollHeight) {
+                    if (postsEnd < posts.length - 1) {
+                        postsEnd += posts.length - postsEnd < 20 ? posts.length - postsEnd - 1 : 20;
+                    } else if (!atEnd && channelData._metadata.backwardLink !== undefined) {
+                        dataManager.fetchMoreMessages(currentChannel).then(more => {
+                            atEnd = !more;
+                        })
+                    }
                 }
             }, 100);
         }
@@ -64,25 +69,14 @@
                 postsEnd += posts.length - postsEnd < 20 ? posts.length - postsEnd - 1 : 20;
             } else if (!atEnd && channelData._metadata.backwardLink !== undefined) {
                 scrolledToBottom = true;
-                getMoreMessages();
+                dataManager.fetchMoreMessages(currentChannel).then(newMessages => {
+                    if (!newMessages) {
+                        atEnd = true;
+                    }
+                    scrolledToBottom = false;
+                })
             }
         }
-    }
-
-    async function getMoreMessages(): Promise<void> {
-        let params = new URL(channelData._metadata.backwardLink).searchParams;
-        return networkManager.getConversation(currentChannel, 20, params.get("startTime"), params.get("syncState"))
-            .then(data => {
-                data.messages = data.messages.filter(message => !channelData.messages.some(message2 => message2.id === message.id))
-                channelData._metadata = data._metadata;
-                if (data.messages.length !== 0) {
-                    channelData.messages = [...channelData.messages, ...data.messages];
-                    localStorage.setItem(`channel-${currentChannel}`, JSON.stringify(channelData));
-                } else {
-                    atEnd = true;
-                }
-                scrolledToBottom = false;
-            });
     }
 
     function groupByKey(list, key) {
