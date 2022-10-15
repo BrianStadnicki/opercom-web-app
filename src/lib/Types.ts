@@ -81,3 +81,10 @@ export interface DataFile {
     title: string,
     type: string
 }
+
+export interface DataApp {
+    id: string,
+    name: string,
+    smallImageUrl: string,
+    largeImageUrl: string
+}

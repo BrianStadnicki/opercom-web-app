@@ -15,7 +15,7 @@
       "http": {
         "all": true,
         "request": true,
-        "scope": ["https://*teams.microsoft.com/*", "https://*skype.com/*"]
+        "scope": ["https://*teams.microsoft.com/*", "https://*skype.com/*", "https://statics.teams.cdn.office.net/*"]
       },
       "shell": {
         "open": true

@@ -29,7 +29,8 @@
 <Post
         id={parent.id}
         senderName={parent.imdisplayname}
-        senderPhoto={""}
+        senderPhoto={networkManager.getAppImage(parent.imdisplayname)
+            .then(b64 => `data:image/jpeg;base64,${b64}`)}
         dateFromNow={moment(parent.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).fromNow()}
         dateSent={moment(parent.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).format("dddd, Do MMMM YYYY, h:mm:ss a")}
         title={undefined}

@@ -41,6 +41,13 @@
           localStorage.setItem("teams", JSON.stringify(res));
         });
     }
+
+    if (localStorage.getItem("apps") === null) {
+      await networkManager.getApps()
+              .then(res => {
+                localStorage.setItem("apps", JSON.stringify(res));
+              })
+    }
     return;
   }
 

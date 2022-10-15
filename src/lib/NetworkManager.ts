@@ -1,6 +1,6 @@
 import type {HttpVerb} from "@tauri-apps/api/http";
 import {Body, fetch, Response, ResponseType} from "@tauri-apps/api/http";
-import type {DataChannel, DataSideTeam, DataSideTeamChannel} from "./Types";
+import type {DataApp, DataChannel, DataSideTeam, DataSideTeamChannel} from "./Types";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
@@ -181,6 +181,17 @@ export class NetworkManager {
             .then(res => res.data);
     }
 
+    async getApps(): Promise<DataApp[]> {
+        return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, '/v1/users/ME/properties')
+            .then(res => JSON.parse(res.data["userPinnedApps"])["pinnedAndCoreApps"])
+            .then(apps => apps.map(app => <DataApp>{
+                id: app["id"],
+                name: app["name"],
+                smallImageUrl: app["smallImageUrl"],
+                largeImageUrl: app["largeImageUrl"]
+            }))
+    }
+
     async getUserProfilePicture(user, name, size) {
         let cached = this.checkImageCache(`user-profile-picture-${user}-${size}`);
         if (cached) {
@@ -194,6 +205,25 @@ export class NetworkManager {
                 this.addToImageCache(`user-profile-picture-${user}-${size}`, b64);
                 return b64;
             })
+    }
+
+    async getAppImage(name) {
+        let cached = this.checkImageCache(`app-image-${name}`);
+        if (cached) {
+            return cached;
+        }
+
+        // FIXME: should be in proper store
+        return await this.fetchWrapper((<DataApp>JSON.parse(localStorage.getItem("apps")).filter((app: DataApp) => app.name === name)[0]).largeImageUrl, {
+            "method": "GET",
+            "responseType": ResponseType.Binary
+        })
+            // @ts-ignore
+            .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
+            .then(b64 => {
+                this.addToImageCache(`app-image-${name}`, b64);
+                return b64;
+            });
     }
 
     async getImgo(object) {
