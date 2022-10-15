@@ -181,13 +181,13 @@ export class NetworkManager {
             .then(res => res.data);
     }
 
-    async getUserProfilePicture(user, size) {
+    async getUserProfilePicture(user, name, size) {
         let cached = this.checkImageCache(`user-profile-picture-${user}-${size}`);
         if (cached) {
             return cached;
         }
 
-        return await this.fetchGenerate(Domain.TEAMS_MICROSOFT_COM, `/api/mt/emea/beta/users/${user}/profilepicturev2?size=${size}`, "GET", "", ResponseType.Binary)
+        return await this.fetchGenerate(Domain.TEAMS_MICROSOFT_COM, `/api/mt/emea/beta/users/${user}/profilepicturev2?displayname=${encodeURIComponent(name)}&size=${size}`, "GET", "", ResponseType.Binary)
             // @ts-ignore
             .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
             .then(b64 => {

@@ -14,7 +14,7 @@
 <Post
     id={parent.id}
     senderName={parent.imdisplayname}
-    senderPhoto={networkManager.getUserProfilePicture(parent.from.substring(parent.from.indexOf("/contacts/") + "/contacts/".length),
+    senderPhoto={networkManager.getUserProfilePicture(parent.from.substring(parent.from.indexOf("/contacts/") + "/contacts/".length), parent.imdisplayname,
                 "HR64x64").then(b64 => `data:image/jpeg;base64,${b64}`)}
     dateFromNow={moment(parent.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).fromNow()}
     dateSent={moment(parent.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).format("dddd, Do MMMM YYYY, h:mm:ss a")}

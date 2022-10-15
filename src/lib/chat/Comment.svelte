@@ -10,7 +10,7 @@
 
 <div class="comment">
 
-    {#await networkManager.getUserProfilePicture(message.from.substring(message.from.indexOf("/contacts/") + "/contacts/".length),
+    {#await networkManager.getUserProfilePicture(message.from.substring(message.from.indexOf("/contacts/") + "/contacts/".length), message.imdisplayname,
         "HR64x64").then(b64 => `data:image/jpeg;base64,${b64}`)}
         <img src={loadingGIF} width="32" height="32" class="profile-image">
     {:then photo}
