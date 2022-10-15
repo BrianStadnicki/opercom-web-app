@@ -43,6 +43,14 @@
                 , 'conversationLink'))
                     .sort((a, b) => moment(b[b.length-1].composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).diff(moment(a[a.length-1].composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS)));
             postsEnd = posts.length > 20 ? 20 : posts.length;
+
+            setTimeout(function () {
+                if (postsEnd < posts.length - 1) {
+                    postsEnd += posts.length - postsEnd < 20 ? posts.length - postsEnd - 1 : 20;
+                } else if (!atEnd && scrollDiv.offsetHeight === scrollDiv.scrollHeight && channelData._metadata.backwardLink !== undefined) {
+                    getMoreMessages();
+                }
+            }, 100);
         }
     }
 
@@ -55,21 +63,25 @@
                 postsEnd += posts.length - postsEnd < 20 ? posts.length - postsEnd - 1 : 20;
             } else if (!atEnd && channelData._metadata.backwardLink !== undefined) {
                 scrolledToBottom = true;
-                let params = new URL(channelData._metadata.backwardLink).searchParams;
-                networkManager.getConversation(currentChannel, 20, params.get("startTime"), params.get("syncState"))
-                    .then(data => {
-                        data.messages = data.messages.filter(message => !channelData.messages.some(message2 => message2.id === message.id));
-                        channelData._metadata = data._metadata;
-                        if (data.messages.length !== 0) {
-                            channelData.messages = [...channelData.messages, ...data.messages];
-                            localStorage.setItem(`channel-${currentChannel}`, JSON.stringify(channelData));
-                        } else {
-                            atEnd = true;
-                        }
-                        scrolledToBottom = false;
-                    });
+                getMoreMessages();
             }
         }
+    }
+
+    async function getMoreMessages(): Promise<void> {
+        let params = new URL(channelData._metadata.backwardLink).searchParams;
+        return networkManager.getConversation(currentChannel, 20, params.get("startTime"), params.get("syncState"))
+            .then(data => {
+                data.messages = data.messages.filter(message => !channelData.messages.some(message2 => message2.id === message.id))
+                channelData._metadata = data._metadata;
+                if (data.messages.length !== 0) {
+                    channelData.messages = [...channelData.messages, ...data.messages];
+                    localStorage.setItem(`channel-${currentChannel}`, JSON.stringify(channelData));
+                } else {
+                    atEnd = true;
+                }
+                scrolledToBottom = false;
+            });
     }
 
     function groupByKey(list, key) {
