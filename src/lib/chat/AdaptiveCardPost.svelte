@@ -3,9 +3,9 @@
     import type {DataMessage} from "../Types";
     import moment from "moment";
     import {NetworkManager} from "../NetworkManager";
-    import {AdaptiveCard} from "adaptivecards";
+    import {Action, AdaptiveCard, OpenUrlAction} from "adaptivecards";
     import {onMount} from "svelte";
-    import MarkdownIt from "markdown-it";
+    import {open} from "@tauri-apps/api/shell";
 
     export let post: DataMessage[];
     export let networkManager: NetworkManager;
@@ -18,9 +18,13 @@
         let postContent = JSON.parse(atob(new DOMParser().parseFromString(parent.content, 'text/html')
             .getElementsByTagName("swift").item(0).getAttribute('b64')));
         postContent['attachments'].forEach(attachment => {
-            MarkdownIt;
             let adaptiveCard = new AdaptiveCard();
             adaptiveCard.parse(attachment.content);
+            adaptiveCard.onExecuteAction = (action: Action) => {
+                if (action instanceof OpenUrlAction) {
+                    open(action.url);
+                }
+            }
             contentDiv.appendChild(adaptiveCard.render());
         });
     })
