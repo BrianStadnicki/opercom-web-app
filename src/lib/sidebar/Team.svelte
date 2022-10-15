@@ -12,7 +12,7 @@
     <summary>{team.name}</summary>
     {#each team.channels.sort((a, b) => a.isGeneral ? -1 : a.name.localeCompare(b.name))
             as channel}
-        <Channel channel={channel} on:message activeChannel={activeChannel}></Channel>
+        <Channel channel={channel} activeChannel={activeChannel}></Channel>
     {/each}
 </details>
 

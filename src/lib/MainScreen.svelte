@@ -2,18 +2,15 @@
     import TeamsSidebar from "./sidebar/TeamsSidebar.svelte";
     import ChatBox from "./chat/ChatBox.svelte";
     import {NetworkManager} from "./NetworkManager";
-    import {writable} from "svelte/store";
     import {DataManager} from "./DataManager";
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
-
-    const activeChannel = writable("");
 </script>
 
 <div>
-    <TeamsSidebar dataManager={dataManager} activeChannel={activeChannel}></TeamsSidebar>
-    <ChatBox dataManager={dataManager} activeChannel={activeChannel} networkManager={networkManager}></ChatBox>
+    <TeamsSidebar dataManager={dataManager}></TeamsSidebar>
+    <ChatBox dataManager={dataManager} networkManager={networkManager}></ChatBox>
 </div>
 
 <style lang="scss">

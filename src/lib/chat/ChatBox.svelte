@@ -9,14 +9,13 @@
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
-    export let activeChannel: Writable<string>;
 
     let currentChannel: string = "";
     let channelData: DataChannel;
 
     let channelSubscription: Unsubscriber;
 
-    activeChannel.subscribe(async channel => {
+    dataManager.getActiveChannel().subscribe(async channel => {
         if (channel !== "") {
             currentChannel = channel;
             scrolledToBottom = false;

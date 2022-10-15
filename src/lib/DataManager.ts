@@ -7,12 +7,18 @@ export class DataManager {
 
     private networkManager: NetworkManager;
 
+    private readonly activeChannel: Writable<string>;
     private channelsMeta: Writable<DataSideTeam[]>;
     private channelsData: Map<string, Writable<DataChannel>>;
 
     constructor(networkManager: NetworkManager) {
         this.networkManager = networkManager;
         this.channelsData = new Map<string, Writable<DataChannel>>();
+        this.activeChannel = writable("");
+    }
+
+    getActiveChannel(): Writable<string> {
+        return this.activeChannel;
     }
 
     async getChannels(): Promise<Writable<DataSideTeam[]>> {
