@@ -4,6 +4,7 @@
     import moment from "moment";
     import RegularPost from "./RegularPost.svelte";
     import type {Writable} from "svelte/store";
+    import AdaptiveCardPost from "./AdaptiveCardPost.svelte";
 
     export let networkManager: NetworkManager;
     export let activeChannel: Writable<string>;
@@ -94,6 +95,8 @@
         {#each posts.slice(0, postsEnd) as post (post[post.length-1].id)}
             {#if post[post.length - 1].messagetype === "RichText/Html" || post[post.length - 1].messagetype === "Text"}
                 <RegularPost post={post} networkManager={networkManager}></RegularPost>
+            {:else if post[post.length - 1].messagetype === "RichText/Media_Card"}
+                <AdaptiveCardPost post={post} networkManager={networkManager}></AdaptiveCardPost>
             {/if}
         {/each}
     {/if}

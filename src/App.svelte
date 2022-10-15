@@ -2,6 +2,8 @@
   import AuthScreen from "./lib/AuthScreen.svelte";
   import MainScreen from "./lib/MainScreen.svelte";
   import {NetworkManager} from "./lib/NetworkManager";
+  import {AdaptiveCard} from "adaptivecards";
+  import MarkdownIt from "markdown-it";
 
   let networkManager;
 
@@ -41,6 +43,11 @@
     }
     return;
   }
+
+  AdaptiveCard.onProcessMarkdown = function (text, result) {
+    result.outputHtml = MarkdownIt().render(text);
+    result.didProcess = true;
+  };
 </script>
 
 <main>
