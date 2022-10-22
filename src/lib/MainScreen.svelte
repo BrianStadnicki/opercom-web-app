@@ -3,9 +3,14 @@
     import ChatBox from "./chat/ChatBox.svelte";
     import {NetworkManager} from "./NetworkManager";
     import {DataManager} from "./DataManager";
+    import {onMount} from "svelte";
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
+
+    onMount(() => {
+        networkManager.getSocket();
+    });
 </script>
 
 <div>

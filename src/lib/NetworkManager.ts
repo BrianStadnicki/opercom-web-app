@@ -1,6 +1,7 @@
 import type {HttpVerb} from "@tauri-apps/api/http";
 import {Body, fetch, Response, ResponseType} from "@tauri-apps/api/http";
 import type {DataApp, DataChannel, DataSideTeam, DataSideTeamChannel} from "./Types";
+import {invoke} from "@tauri-apps/api/tauri";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
@@ -238,6 +239,51 @@ export class NetworkManager {
             .then(b64 => {
                 this.addToImageCache(`imgo-${object}`, b64);
                 return b64;
+            });
+    }
+
+    async getSocket() {
+        await this.fetchWrapper("https://go-eu.trouter.teams.microsoft.com/v4/a/", {
+            "headers": {
+                "x-skypetoken": this.skypeToken,
+                "Origin": "https://teams.microsoft.com",
+                "Content-Length": "0"
+            },
+            "method": "POST",
+            "responseType": ResponseType.JSON
+        })
+            .then(res => res.data)
+            .then(config => {
+                let params = new URLSearchParams('');
+                for (let key of Object.keys(config['connectparams'])) {
+                    params.append(key, config['connectparams'][key]);
+                }
+
+                let paramsStr = params.toString() +
+                    '&v=v4' +
+                    '&tc=%7B%22cv%22:%222022.30.01.1%22,%22ua%22:%22TeamsCDL%22,%22hr%22:%22%22,%22v%22:%221.0.0.2022080828%22%7D' +
+                    '&timeout=40' +
+                    '&auth=true' +
+                    '&epid=1' +
+                    '&ccid=1' +
+                    '&cor_id=1' +
+                    '&con_num=1' +
+                    '&t=1';
+
+                this.fetchWrapper(config["socketio"] + "socket.io/1/?" + paramsStr, {
+                    "headers": {
+                        "origin": "https://teams.microsoft.com"
+                    },
+                    "responseType": ResponseType.Text
+                })
+                    .then(res => res.data)
+                    .then(res => {
+                        let socket = res.substring(0, res.indexOf(":"));
+                        invoke('create_websocket', {
+                            "url": config["socketio"].replace("https://", "wss://") + "socket.io/1/websocket/" + socket + "?" + paramsStr,
+                            "cookie": `MC1=GUID=5495f266525a428fa27083b312d72964&HASH=5495&LV=202210&V=4&LU=1665695832235; MS0=453b85d208f64b6b93ad139fe9d1b5e1; platformid_asm=1415; skypetoken_asm=${this.skypeToken}; authtoken=${encodeURIComponent(this.authToken)}%26Origin%3Dhttps%3A%2F%2Fteams.microsoft.com; clienttype=web; tenantId=e3bb77cd-3d74-4e71-9426-ac95c2e62e65`
+                        });
+                    });
             });
     }
 
