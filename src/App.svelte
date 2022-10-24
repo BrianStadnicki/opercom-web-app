@@ -20,8 +20,9 @@
             localStorage.getItem("auth-token"),
             localStorage.getItem("email"),
             localStorage.getItem("chatspaces-token"),
-            () => {
+            async () => {
               needAuth = true;
+              await setTimeout(() => {}, 5000000);
             }
     );
 

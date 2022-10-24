@@ -24,7 +24,7 @@ export class DataManager {
     async getChannels(): Promise<Writable<DataSideTeam[]>> {
         if (this.channelsMeta === undefined) {
             let stored = localStorage.getItem("teams");
-            if (stored !== undefined) {
+            if (stored !== undefined && stored !== null) {
                 this.channelsMeta = writable(JSON.parse(stored));
             } else {
                 await this.networkManager.getTeamsList().then(list => {

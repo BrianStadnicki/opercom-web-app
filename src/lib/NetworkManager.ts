@@ -1,7 +1,4 @@
-import type {HttpVerb} from "@tauri-apps/api/http";
-import {Body, fetch, Response, ResponseType} from "@tauri-apps/api/http";
 import type {DataApp, DataChannel, DataSideTeam, DataSideTeamChannel} from "./Types";
-import {invoke} from "@tauri-apps/api/tauri";
 
 enum Domain {
     TEAMS_MICROSOFT_COM,
@@ -9,17 +6,23 @@ enum Domain {
     REGION_ASYNCGW_TEAMS_MICROSOFT_COM
 }
 
+enum ResponseType {
+    JSON,
+    Text,
+    Binary
+}
+
 export class NetworkManager {
     skypeToken: string;
     authToken: string;
     chatSpacesToken: string;
     email: string;
-    reauth: () => void;
+    reauth: () => Promise<void>;
 
     networkUp:boolean = true;
     waitingForNetworkCallbacks:(() => Promise<void>)[] = [];
 
-    constructor(skypeToken: string, authToken: string, email: string, chatSpacesToken: string, reauth: () => void) {
+    constructor(skypeToken: string, authToken: string, email: string, chatSpacesToken: string, reauth: () => Promise<void>) {
         this.skypeToken = skypeToken;
         this.authToken = authToken;
         this.chatSpacesToken = chatSpacesToken;
@@ -27,23 +30,36 @@ export class NetworkManager {
         this.reauth = reauth;
     }
 
-    private async fetchWrapper(url, fetchOptions): Promise<Response<any>> {
+    private async fetchWrapper(hostname: string, path: string, fetchOptions: object): Promise<Response> {
         console.log("fetching")
-        console.log(url);
+        console.log(hostname, path);
         console.log(fetchOptions)
+
+        if (fetchOptions["headers"] === undefined) {
+            fetchOptions["headers"] = {}
+        }
+        fetchOptions["credentials"] = "omit";
+        fetchOptions["headers"]["opercom-hostname"] = hostname;
+        // fetchOptions["headers"]["opercom-path"] = decodeURI(path);
+        if (fetchOptions["body"] === "") {
+            fetchOptions["body"] = undefined;
+        }
+
         let promiseFunction = (resolve, reject) => {
             if (this.networkUp) {
-                fetch(url, fetchOptions)
-                    .then((response: Response<any>) => {
+                fetch(`http://localhost:8084/proxy${path}`, fetchOptions)
+                    .then((response: Response) => {
                         console.log(response);
                         if (response.status === 401) {
-                            this.reauth();
-                            throw Error("Unauthorized");
+                            this.networkUp = false;
+                            this.reauth().then(() => {
+                                throw Error("Unauthorized");
+                            });
                         }
                         resolve(response);
                     })
                     .catch((error) => {
-                        console.log(error, url, fetchOptions);
+                        console.log(error, "http://localhost:8084/proxy", hostname, path, fetchOptions);
                         if (this.networkUp) {
                             this.networkUp = false;
 
@@ -52,7 +68,7 @@ export class NetworkManager {
                             });
 
                             let waitForInternet = function (_resolve, _reject) {
-                                fetch('https://teams.microsoft.com', { method: "GET" })
+                                fetch('http://localhost:5173/up', { method: "GET" })
                                     .then(() => {
                                         _resolve();
                                     })
@@ -84,74 +100,75 @@ export class NetworkManager {
         return new Promise(promiseFunction);
     }
 
-    private fetchGenerate(domain: Domain, path: string, method: HttpVerb = "GET", body: string = "", responseType: ResponseType = ResponseType.JSON) {
+    private fetchGenerate(domain: Domain, path: string, method: string = "GET", body: string = "", responseType: ResponseType = ResponseType.JSON) {
         switch (domain) {
             case Domain.TEAMS_MICROSOFT_COM:
                 switch (responseType) {
                     case ResponseType.JSON:
-                        return this.fetchWrapper(`https://teams.microsoft.com${path}`, {
+                        return this.fetchWrapper("teams.microsoft.com:443", path, {
                             "headers": {
-                                "origin": "https://teams.microsoft.com",
-                                "host": "https://teams.microsoft.com",
-                                "referer": "https://teams.microsoft.com/_",
+                                "opercom-origin": "https://teams.microsoft.com",
+                                "opercom-host": "teams.microsoft.com",
+                                "opercom-referer": "teams.microsoft.com/_",
                                 "authority": "teams.microsoft.com",
                                 "authorization": this.authToken,
                                 "x-skypetoken": this.skypeToken,
                                 "x-anchormailbox": this.email,
-                                "cookie": `skypetoken_asm=${this.skypeToken}; authtoken=${this.authToken.replace("Bearer ", "Bearer%3D")}&Origin=https://teams.microsoft.com`,
+                                "opercom-cookie": `skypetoken_asm=${this.skypeToken}; authtoken=${this.authToken.replace("Bearer ", "Bearer%3D")}&Origin=teams.microsoft.com`,
                             },
                             "method": method,
-                            "body": Body.text(body),
-                            "responseType": responseType
+                            "body": body
                         })
                     case ResponseType.Binary:
-                        return this.fetchWrapper(`https://teams.microsoft.com${path}`, {
+                        return this.fetchWrapper("teams.microsoft.com:443", path, {
                             "headers": {
-                                "referer": "https://teams.microsoft.com/_",
+                                "opercom-host": "teams.microsoft.com",
+                                "opercom-referer": "teams.microsoft.com/_",
                                 "authority": "teams.microsoft.com",
-                                "cookie": `skypetoken_asm=${this.skypeToken}; authtoken=${this.authToken.replace("Bearer ", "Bearer%3D")}&Origin=https://teams.microsoft.com`,
+                                "opercom-cookie": `skypetoken_asm=${this.skypeToken}; authtoken=${this.authToken.replace("Bearer ", "Bearer%3D")}&Origin=teams.microsoft.com`,
                             },
-                            "method": method,
-                            "responseType": responseType
+                            "method": method
                         })
                 }
                 break;
             case Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM:
-                return this.fetchWrapper(`https://uk.ng.msg.teams.microsoft.com${path}`, {
+                return this.fetchWrapper("uk.ng.msg.teams.microsoft.com:443", path, {
                     "headers": {
+                        "opercom-origin": "https://teams.microsoft.com",
+                        "opercom-host": "uk.ng.msg.teams.microsoft.com",
                         "authentication": `skypetoken=${this.skypeToken}`
                     },
                     "method": method,
-                    "body": Body.text(body),
-                    "responseType": responseType
+                    "body": body
                 })
             case Domain.REGION_ASYNCGW_TEAMS_MICROSOFT_COM:
-                return this.fetchWrapper(`https://uk-prod.asyncgw.teams.microsoft.com${path}`, {
+                return this.fetchWrapper("uk-prod.asyncgw.teams.microsoft.com:443", path, {
                     "headers": {
+                        "opercom-origin": "teams.microsoft.com",
+                        "opercom-host": "teams.microsoft.com",
                         "authorization": `skype_token ${localStorage.getItem("skype-token")}`
                     },
                     "method": method,
-                    "body": Body.text(body),
-                    "responseType": responseType
+                    "body": body
                 })
         }
     }
 
     async getUserProperties(email: string) {
         return this.fetchGenerate(Domain.TEAMS_MICROSOFT_COM, `/api/mt/emea/beta/users/${encodeURIComponent(email)}/?throwIfNotFound=false&isMailAddress=false&enableGuest=true&includeIBBarredUsers=true&skypeTeamsInfo=true`)
-            .then(res => res.data);
+            .then(res => res.json());
     }
 
     async getTeamsList(): Promise<DataSideTeam[]> {
-        return this.fetchWrapper(`https://teams.microsoft.com/api/csa/uk/api/v1/teams/users/me?isPrefetch=false&enableMembershipSummary=true`, {
+        return this.fetchWrapper("teams.microsoft.com:443", "/api/csa/uk/api/v1/teams/users/me?isPrefetch=false&enableMembershipSummary=true", {
             "headers": {
-                "host": "teams.microsoft.com",
+                "opercom-host": "teams.microsoft.com",
                 "authorization": `Bearer ${this.chatSpacesToken}`,
                 "x-skypetoken": this.skypeToken,
             },
             "method": "GET"
         })
-            .then(res => res.data)
+            .then(res => res.json())
             .then(json => {
                 return json["teams"].map(team => <DataSideTeam>{
                     channels: team["channels"].map(channel => <DataSideTeamChannel>{
@@ -179,12 +196,13 @@ export class NetworkManager {
             encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}${
             syncState === undefined ? '' : `&syncState=${syncState}`}`)
 
-            .then(res => res.data);
+            .then(res => res.json());
     }
 
     async getApps(): Promise<DataApp[]> {
         return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, '/v1/users/ME/properties')
-            .then(res => JSON.parse(res.data["userPinnedApps"])["pinnedAndCoreApps"])
+            .then(res => res.json())
+            .then(res => JSON.parse(res["userPinnedApps"])["pinnedAndCoreApps"])
             .then(apps => apps.map(app => <DataApp>{
                 id: app["id"],
                 name: app["name"],
@@ -193,66 +211,33 @@ export class NetworkManager {
             }))
     }
 
-    async getUserProfilePicture(user, name, size) {
-        let cached = this.checkImageCache(`user-profile-picture-${user}-${size}`);
-        if (cached) {
-            return cached;
-        }
-
-        return await this.fetchGenerate(Domain.TEAMS_MICROSOFT_COM, `/api/mt/emea/beta/users/${user}/profilepicturev2?displayname=${encodeURIComponent(name)}&size=${size}`, "GET", "", ResponseType.Binary)
+    async getUserProfilePicture(user, name, size): Promise<Blob> {
+        return await this.fetchGenerate(Domain.TEAMS_MICROSOFT_COM, `/api/mt/emea/beta/users/${decodeURIComponent(user)}/profilepicturev2?displayname=${encodeURIComponent(name)}&size=${size}`, "GET", "", ResponseType.Binary)
             // @ts-ignore
-            .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
-            .then(b64 => {
-                this.addToImageCache(`user-profile-picture-${user}-${size}`, b64);
-                return b64;
-            })
+            .then(res => res.blob())
     }
 
-    async getAppImage(name) {
-        let cached = this.checkImageCache(`app-image-${name}`);
-        if (cached) {
-            return cached;
-        }
-
-        // FIXME: should be in proper store
-        return await this.fetchWrapper((<DataApp>JSON.parse(localStorage.getItem("apps")).filter((app: DataApp) => app.name === name)[0]).largeImageUrl, {
-            "method": "GET",
-            "responseType": ResponseType.Binary
-        })
-            // @ts-ignore
-            .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
-            .then(b64 => {
-                this.addToImageCache(`app-image-${name}`, b64);
-                return b64;
-            });
+    async getAppImage(name): Promise<Blob> {
+        return fetch((<DataApp>JSON.parse(localStorage.getItem("apps")).filter((app: DataApp) => app.name === name)[0]).largeImageUrl)
+            .then(res => res.blob())
     }
 
-    async getImgo(object) {
-        let cached = this.checkImageCache(`imgo-${object}`);
-        if (cached) {
-            return cached;
-        }
-
+    async getImgo(object): Promise<Blob> {
         return await this.fetchGenerate(Domain.REGION_ASYNCGW_TEAMS_MICROSOFT_COM, `/v1/objects/${object}/views/imgo?v=1`, "GET", "", ResponseType.Binary)
-            // @ts-ignore
-            .then(res => btoa(res.data.map(byte => String.fromCharCode(byte)).join("")))
-            .then(b64 => {
-                this.addToImageCache(`imgo-${object}`, b64);
-                return b64;
-            });
+            .then(res => res.blob())
     }
 
     async getSocket() {
-        await this.fetchWrapper("https://go-eu.trouter.teams.microsoft.com/v4/a/", {
+        /*
+        await this.fetchWrapper("go-eu.trouter.teams.microsoft.com:443", "/v4/a/", {
             "headers": {
                 "x-skypetoken": this.skypeToken,
-                "Origin": "https://teams.microsoft.com",
+                "opercom-origin": "teams.microsoft.com",
                 "Content-Length": "0"
             },
-            "method": "POST",
-            "responseType": ResponseType.JSON
+            "method": "POST"
         })
-            .then(res => res.data)
+            .then(res => res.json())
             .then(config => {
                 let params = new URLSearchParams('');
                 for (let key of Object.keys(config['connectparams'])) {
@@ -272,29 +257,21 @@ export class NetworkManager {
 
                 this.fetchWrapper(config["socketio"] + "socket.io/1/?" + paramsStr, {
                     "headers": {
-                        "origin": "https://teams.microsoft.com"
-                    },
-                    "responseType": ResponseType.Text
+                        "opercom-origin": "teams.microsoft.com"
+                    }
                 })
-                    .then(res => res.data)
+                    .then(res => res.text())
                     .then(res => {
                         let socket = res.substring(0, res.indexOf(":"));
+                        /*
                         invoke('create_websocket', {
-                            "url": config["socketio"].replace("https://", "wss://") + "socket.io/1/websocket/" + socket + "?" + paramsStr,
-                            "cookie": `MC1=GUID=5495f266525a428fa27083b312d72964&HASH=5495&LV=202210&V=4&LU=1665695832235; MS0=453b85d208f64b6b93ad139fe9d1b5e1; platformid_asm=1415; skypetoken_asm=${this.skypeToken}; authtoken=${encodeURIComponent(this.authToken)}%26Origin%3Dhttps%3A%2F%2Fteams.microsoft.com; clienttype=web; tenantId=e3bb77cd-3d74-4e71-9426-ac95c2e62e65`
+                            "url": config["socketio"].replace("", "wss://") + "socket.io/1/websocket/" + socket + "?" + paramsStr,
+                            "opercom-cookie": `MC1=GUID=5495f266525a428fa27083b312d72964&HASH=5495&LV=202210&V=4&LU=1665695832235; MS0=453b85d208f64b6b93ad139fe9d1b5e1; platformid_asm=1415; skypetoken_asm=${this.skypeToken}; authtoken=${encodeURIComponent(this.authToken)}%26Origin%3Dhttps%3A%2F%2Fteams.microsoft.com; clienttype=web; tenantId=e3bb77cd-3d74-4e71-9426-ac95c2e62e65`
                         });
+
+
                     });
             });
-    }
-
-    private checkImageCache(image) {
-        if (localStorage.getItem(`cache-image-${image}`) !== undefined) {
-            return localStorage.getItem(`cache-image-${image}`);
-        }
-        return false;
-    }
-
-    private addToImageCache(image, b64) {
-        localStorage.setItem(`cache-image-${image}`, b64);
+        */
     }
 }

@@ -5,7 +5,6 @@
     import {NetworkManager} from "../NetworkManager";
     import {Action, AdaptiveCard, OpenUrlAction} from "adaptivecards";
     import {onMount} from "svelte";
-    import {open} from "@tauri-apps/api/shell";
 
     export let post: DataMessage[];
     export let networkManager: NetworkManager;
@@ -22,7 +21,7 @@
             adaptiveCard.parse(attachment.content);
             adaptiveCard.onExecuteAction = (action: Action) => {
                 if (action instanceof OpenUrlAction) {
-                    open(action.url);
+                    // FIXME: opening url action.url;
                 }
             }
             contentDiv.appendChild(adaptiveCard.render());
@@ -34,7 +33,7 @@
         id={parent.id}
         senderName={parent.imdisplayname}
         senderPhoto={networkManager.getAppImage(parent.imdisplayname)
-            .then(b64 => `data:image/jpeg;base64,${b64}`)}
+            .then(blob => URL.createObjectURL(blob))}
         dateFromNow={moment(parent.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).fromNow()}
         dateSent={moment(parent.composetime, moment.HTML5_FMT.DATETIME_LOCAL_MS).format("dddd, Do MMMM YYYY, h:mm:ss a")}
         title={undefined}

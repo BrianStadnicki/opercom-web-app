@@ -1,6 +1,5 @@
 <script lang="ts">
     import type {DataMessage} from "../Types";
-    import loadingGIF from "../../assets/loading.gif";
     import moment from "moment";
 
     export let message: DataMessage;
@@ -11,9 +10,7 @@
 <div class="comment">
 
     {#await networkManager.getUserProfilePicture(message.from.substring(message.from.indexOf("/contacts/") + "/contacts/".length), message.imdisplayname,
-        "HR64x64").then(b64 => `data:image/jpeg;base64,${b64}`)}
-        <img src={loadingGIF} width="32" height="32" class="profile-image">
-    {:then photo}
+        "HR64x64").then(blob => URL.createObjectURL(blob)) then photo}
         <img src={photo} width="32" height="32" class="profile-image">
     {/await}
 
