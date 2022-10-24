@@ -33,9 +33,8 @@
             (<HTMLImageElement>img).removeAttribute('height');
             (<HTMLImageElement>img).removeAttribute('width');
 
-            networkManager.getImgo(object).then(b64 => {
-                let url = `data:image/jpeg;base64,${b64}`;
-                (<HTMLImageElement>img).src = url;
+            networkManager.getImgo(object).then(blob => {
+                (<HTMLImageElement>img).src = URL.createObjectURL(blob);
                 // TODO: add enlarging images
                 /*
                 img.addEventListener('click', function () {

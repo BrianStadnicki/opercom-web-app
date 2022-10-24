@@ -211,59 +211,20 @@ export class NetworkManager {
             }))
     }
 
-    async getUserProfilePicture(user, name, size) {
-        let cached = this.checkImageCache(`user-profile-picture-${user}-${size}`);
-        if (cached) {
-            return cached;
-        }
-
+    async getUserProfilePicture(user, name, size): Promise<Blob> {
         return await this.fetchGenerate(Domain.TEAMS_MICROSOFT_COM, `/api/mt/emea/beta/users/${decodeURIComponent(user)}/profilepicturev2?displayname=${encodeURIComponent(name)}&size=${size}`, "GET", "", ResponseType.Binary)
             // @ts-ignore
-            .then(res => res.arrayBuffer())
-            .then(res => btoa(String.fromCharCode(...new Uint8Array(res))))
-            .then(b64 => {
-                this.addToImageCache(`user-profile-picture-${user}-${size}`, b64);
-                return b64;
-            })
+            .then(res => res.blob())
     }
 
-    async getAppImage(name) {
-        let cached = this.checkImageCache(`app-image-${name}`);
-        if (cached) {
-            return cached;
-        }
-
-        // FIXME: should be in proper store
-        // FIXME: setup properly...
-        /*
-        return await this.fetchWrapper((<DataApp>JSON.parse(localStorage.getItem("apps")).filter((app: DataApp) => app.name === name)[0]).largeImageUrl, {
-            "method": "GET"
-        })
-            .then(res => res.text())
-            // @ts-ignore
-            .then(res => btoa(res.map(byte => String.fromCharCode(byte)).join("")))
-            .then(b64 => {
-                this.addToImageCache(`app-image-${name}`, b64);
-                return b64;
-            });
-
-         */
+    async getAppImage(name): Promise<Blob> {
+        return fetch((<DataApp>JSON.parse(localStorage.getItem("apps")).filter((app: DataApp) => app.name === name)[0]).largeImageUrl)
+            .then(res => res.blob())
     }
 
-    async getImgo(object) {
-        let cached = this.checkImageCache(`imgo-${object}`);
-        if (cached) {
-            return cached;
-        }
-
+    async getImgo(object): Promise<Blob> {
         return await this.fetchGenerate(Domain.REGION_ASYNCGW_TEAMS_MICROSOFT_COM, `/v1/objects/${object}/views/imgo?v=1`, "GET", "", ResponseType.Binary)
-            // @ts-ignore
-            .then(res => res.arrayBuffer())
-            .then(res => btoa(String.fromCharCode(...new Uint8Array(res))))
-            .then(b64 => {
-                this.addToImageCache(`imgo-${object}`, b64);
-                return b64;
-            });
+            .then(res => res.blob())
     }
 
     async getSocket() {
@@ -312,16 +273,5 @@ export class NetworkManager {
                     });
             });
         */
-    }
-
-    private checkImageCache(image) {
-        if (localStorage.getItem(`cache-image-${image}`) !== undefined) {
-            return localStorage.getItem(`cache-image-${image}`);
-        }
-        return false;
-    }
-
-    private addToImageCache(image, b64) {
-        localStorage.setItem(`cache-image-${image}`, b64);
     }
 }

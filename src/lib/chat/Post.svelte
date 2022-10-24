@@ -1,5 +1,4 @@
 <script lang="ts">
-    import loadingGIF from "../../assets/loading.gif";
     import type {DataFile, DataMessage} from "../Types";
     import Comment from "./Comment.svelte";
     import Content from "./Content.svelte";
@@ -31,9 +30,7 @@
 </script>
 
 <div class="post">
-    {#await senderPhoto}
-        <img src={loadingGIF} width="48" height="48" class="profile-image" alt="loading...">
-    {:then photo}
+    {#await senderPhoto then photo}
         <img src={photo} width="48" height="48" class="profile-image" alt={senderName}>
     {/await}
 
