@@ -5,7 +5,6 @@
     import {NetworkManager} from "../NetworkManager";
     import {Action, AdaptiveCard, OpenUrlAction} from "adaptivecards";
     import {onMount} from "svelte";
-    import {open} from "@tauri-apps/api/shell";
 
     export let post: DataMessage[];
     export let networkManager: NetworkManager;
@@ -22,7 +21,7 @@
             adaptiveCard.parse(attachment.content);
             adaptiveCard.onExecuteAction = (action: Action) => {
                 if (action instanceof OpenUrlAction) {
-                    open(action.url);
+                    // FIXME: opening url action.url;
                 }
             }
             contentDiv.appendChild(adaptiveCard.render());
