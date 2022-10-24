@@ -52,5 +52,10 @@
         color: white;
       }
     }
+
+    .main {
+      grid-area: main;
+      height: calc(100vh - 50px);
+    }
   }
 </style>
