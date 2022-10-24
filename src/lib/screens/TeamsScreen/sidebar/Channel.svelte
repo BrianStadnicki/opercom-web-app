@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {DataSideTeamChannel} from "../Types";
+    import type {DataSideTeamChannel} from "../../../Types";
     import type {Writable} from "svelte/store";
 
     export let channel: DataSideTeamChannel;

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import AuthScreen from "./lib/AuthScreen.svelte";
-  import MainScreen from "./lib/MainScreen.svelte";
+  import AuthScreen from "./lib/screens/AuthScreen.svelte";
+  import MainScreen from "./lib/screens/TeamsScreen/MainScreen.svelte";
   import {NetworkManager} from "./lib/NetworkManager";
   import {AdaptiveCard} from "adaptivecards";
   import MarkdownIt from "markdown-it";

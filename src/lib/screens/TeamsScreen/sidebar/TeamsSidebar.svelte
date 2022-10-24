@@ -1,7 +1,7 @@
 <script lang="ts">
     import Team from "./Team.svelte";
-    import {DataManager} from "../DataManager";
-    import type {DataSideTeam} from "../Types";
+    import {DataManager} from "../../../DataManager";
+    import type {DataSideTeam} from "../../../Types";
 
     export let dataManager: DataManager;
 

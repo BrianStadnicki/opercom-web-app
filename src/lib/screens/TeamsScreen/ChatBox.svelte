@@ -1,11 +1,11 @@
 <script lang="ts">
-    import {NetworkManager} from "../NetworkManager";
-    import type {DataChannel, DataMessage} from "../Types";
+    import {NetworkManager} from "../../NetworkManager";
+    import type {DataChannel, DataMessage} from "../../Types";
     import moment from "moment";
-    import RegularPost from "./RegularPost.svelte";
+    import RegularPost from "../../posts/RegularPost.svelte";
     import type {Unsubscriber, Writable} from "svelte/store";
-    import AdaptiveCardPost from "./AdaptiveCardPost.svelte";
-    import {DataManager} from "../DataManager";
+    import AdaptiveCardPost from "../../posts/AdaptiveCardPost.svelte";
+    import {DataManager} from "../../DataManager";
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;

@@ -1,8 +1,8 @@
 <script lang="ts">
     import TeamsSidebar from "./sidebar/TeamsSidebar.svelte";
-    import ChatBox from "./chat/ChatBox.svelte";
-    import {NetworkManager} from "./NetworkManager";
-    import {DataManager} from "./DataManager";
+    import ChatBox from "./ChatBox.svelte";
+    import {NetworkManager} from "../../NetworkManager";
+    import {DataManager} from "../../DataManager";
     import {onMount} from "svelte";
 
     export let dataManager: DataManager;
