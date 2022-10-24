@@ -1,10 +1,10 @@
 <script lang="ts">
   import AuthScreen from "./lib/screens/AuthScreen.svelte";
-  import MainScreen from "./lib/screens/TeamsScreen/MainScreen.svelte";
   import {NetworkManager} from "./lib/NetworkManager";
   import {AdaptiveCard} from "adaptivecards";
   import MarkdownIt from "markdown-it";
   import {DataManager} from "./lib/DataManager";
+  import ParentScreen from "./lib/ParentScreen.svelte";
 
   let dataManager: DataManager;
   let networkManager: NetworkManager;
@@ -61,7 +61,7 @@
     <AuthScreen></AuthScreen>
   {:else}
     {#await initialise() then _}
-      <MainScreen dataManager={dataManager} networkManager={networkManager}></MainScreen>
+      <ParentScreen dataManager={dataManager} networkManager={networkManager}></ParentScreen>
     {/await}
   {/if}
 </main>

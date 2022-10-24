@@ -20,6 +20,7 @@
   "dependencies": {
     "adaptivecards": "^3.0.0-beta.8",
     "autoprefixer": "^10.4.12",
+    "bootstrap-icons": "^1.9.1",
     "markdown-it": "^13.0.1",
     "moment": "^2.29.4",
     "svelte-check": "^2.9.1",
