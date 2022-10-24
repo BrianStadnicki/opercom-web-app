@@ -32,11 +32,12 @@
   div {
     grid-column: 1 / 2;
     overflow-y: auto;
-    background-color: $colour-1;
+    background-color: #dcdcdc;
     scroll-behavior: smooth;
   }
 
   summary {
-    background-color: orange;
+    background-color: white;
+    margin: 5px;
   }
 </style>

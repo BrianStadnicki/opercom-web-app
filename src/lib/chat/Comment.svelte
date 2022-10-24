@@ -33,13 +33,14 @@
     .comment {
       display: grid;
       grid-template-columns: 36px auto;
-      border-bottom: red solid;
+      border-bottom: lightgrey solid;
       padding: 5px;
 
       .profile-image {
         grid-column: 1;
         grid-row: 1;
         pointer-events: none;
+        border-radius: 5px;
       }
 
       .main {

@@ -21,16 +21,17 @@
       margin-bottom: 5px;
 
       summary {
-        color: $colour-1;
-        background-color: $colour-5;
+        color: #262626;
+        background-color: white;
+        border-radius: 5px;
         display: block;
         text-decoration: none;
         font-size: large;
-        cursor: pointer;
+        user-select: none;
       }
 
-      a:hover {
-        background-color: $colour-4;
+      summary:hover {
+        background-color: #939393;
       }
     }
 </style>

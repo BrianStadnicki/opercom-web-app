@@ -101,5 +101,6 @@
         overflow-y: auto;
         padding-bottom: 10px;
         scroll-behavior: smooth;
+        background-color: #ececec;
     }
 </style>

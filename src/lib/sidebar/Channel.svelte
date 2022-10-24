@@ -18,23 +18,21 @@
 <a on:click={clicked} class:active>{channel.name}</a>
 
 <style lang="scss">
-  a:not(:first-child) {
-    border-top-color: $colour-2;
-    border-top-style: dashed;
-  }
-
   a {
     display: block;
-    background-color: $colour-4;
-    color: $colour-1;
+    background-color: #f1f1f1;
+    color: black;
+    margin: 5px;
+    border-radius: 5px;
     font-size: large;
+    user-select: none;
   }
 
   a.active  {
-    background-color: $colour-2;
+    background-color: grey;
   }
 
   a:hover {
-    background-color: $colour-5;
+    background-color: grey;
   }
 </style>

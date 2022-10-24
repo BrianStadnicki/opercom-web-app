@@ -104,23 +104,27 @@
     margin-left: 10px;
     margin-right: 10px;
     word-break: break-all;
+    margin-bottom: 5px;
 
     .profile-image {
       grid-column: 1;
       grid-row: 1;
       pointer-events: none;
+      border-radius: 5px;
     }
 
     .main {
       grid-column: 2;
       grid-row: 1;
-      border: red 5px solid;
+      padding: 5px;
+      background-color: white;
+      border-radius: 5px;
 
       .header {
 
         display: flex;
         flex-direction: row;
-        border-bottom: red 2px solid;
+        border-bottom: black 2px solid;
         padding: 5px;
 
         .name {
@@ -194,7 +198,7 @@
         grid-row: 2;
 
         padding: 5px;
-        border-top: red solid;
+        border-top: black solid;
       }
 
     }

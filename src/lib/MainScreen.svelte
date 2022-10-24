@@ -22,7 +22,6 @@
     div {
         display: grid;
         grid-template-columns: 200px 1fr;
-        column-gap: 10px;
         height: 100vh;
     }
 </style>
