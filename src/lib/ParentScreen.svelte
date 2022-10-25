@@ -2,11 +2,12 @@
     import {DataManager} from "./DataManager";
     import {NetworkManager} from "./NetworkManager";
     import TeamsScreen from "./screens/TeamsScreen/TeamsScreen.svelte";
+    import ActivityScreen from "./screens/ActivityScreen/ActivityScreen.svelte";
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
 
-    let activeApp = "Teams";
+    let activeApp :string = "Teams";
 </script>
 
 <div class="whole">
@@ -14,12 +15,20 @@
 
     </div>
     <div class="side">
-        <i class="bi bi-people"></i>
-        <span>Teams</span>
+        <div on:click="{() => activeApp = 'Activity'}">
+            <i class="bi bi-bell"></i>
+            <span>Activity</span>
+        </div>
+        <div on:click="{() => activeApp = 'Teams'}">
+            <i class="bi bi-people"></i>
+            <span>Teams</span>
+        </div>
     </div>
     <div class="main">
         {#if activeApp === "Teams"}
             <TeamsScreen dataManager={dataManager} networkManager={networkManager}></TeamsScreen>
+        {:else if activeApp === "Activity"}
+            <ActivityScreen dataManager={dataManager} networkManager={networkManager}></ActivityScreen>
         {/if}
     </div>
 </div>
@@ -42,14 +51,18 @@
 
     .side {
       grid-area: side;
-      i {
-        color: white;
-        text-align: center;
-        font-size: 45px;
-      }
+      div {
+        display: block;
+        user-select: none;
+        i {
+          color: white;
+          text-align: center;
+          font-size: 45px;
+        }
 
-      span {
-        color: white;
+        span {
+          color: white;
+        }
       }
     }
 

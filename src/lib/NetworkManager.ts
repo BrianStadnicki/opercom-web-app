@@ -193,7 +193,7 @@ export class NetworkManager {
 
     async getConversation(thread, messages, startTime, syncState?): Promise<DataChannel> {
         return this.fetchGenerate(Domain.REGION_NG_MSG_TEAMS_MICROSOFT_COM, `/v1/users/ME/conversations/${
-            encodeURIComponent(thread)}/messages?pageSize=${messages}&startTime=${startTime}${
+            encodeURIComponent(thread)}/messages?view=msnp24Equivalent|supportsMessageProperties&pageSize=${messages}&startTime=${startTime}${
             syncState === undefined ? '' : `&syncState=${syncState}`}`)
 
             .then(res => res.json());

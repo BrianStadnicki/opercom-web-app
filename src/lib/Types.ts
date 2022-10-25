@@ -49,7 +49,16 @@ export interface DataMessage {
         subject?: string,
         title?: string,
         files?: string,
-        deletetime?: number
+        deletetime?: number,
+        activity?: {
+            activityType: string,
+            sourceThreadId: string,
+            sourceMessageId: string,
+            sourceUserId: string,
+            sourceUserImDisplayName: string,
+            messagePreview: string,
+            sourceThreadTopic: string
+        }
     }
     sequenceId: number,
     type: string,
