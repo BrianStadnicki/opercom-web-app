@@ -19,7 +19,7 @@ export class NetworkManager {
     email: string;
     reauth: () => Promise<void>;
 
-    networkUp:boolean = true;
+    networkUp: boolean = true;
     waitingForNetworkCallbacks:(() => Promise<void>)[] = [];
 
     constructor(skypeToken: string, authToken: string, email: string, chatSpacesToken: string, reauth: () => Promise<void>) {
@@ -68,7 +68,7 @@ export class NetworkManager {
                             });
 
                             let waitForInternet = function (_resolve, _reject) {
-                                fetch('http://localhost:5173/up', { method: "GET" })
+                                fetch('http://localhost:8084/up', { method: "GET", mode: "no-cors" })
                                     .then(() => {
                                         _resolve();
                                     })
