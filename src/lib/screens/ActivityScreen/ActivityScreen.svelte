@@ -8,19 +8,13 @@
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
 
-    let activeActivity = new writable<{channel: string, message: string}>({
-        channel: undefined,
-        message: undefined,
-    });
-
-    activeActivity.subscribe(active => {
-        dataManager.getActiveChannel().set(active.channel);
-    })
+    let activeChannel = new writable("");
+    let activeMessage = new writable("");
 </script>
 
 <div>
-    <Activities activeActivity={activeActivity} networkManager={networkManager} dataManager={dataManager}></Activities>
-    <ChatBox networkManager={networkManager} dataManager={dataManager}></ChatBox>
+    <Activities networkManager={networkManager} dataManager={dataManager} activeChannel={activeChannel} activeMessage={activeMessage}></Activities>
+    <ChatBox networkManager={networkManager} dataManager={dataManager} activeChannel={activeChannel} activeMessage={activeMessage}></ChatBox>
 </div>
 
 <style lang="scss">

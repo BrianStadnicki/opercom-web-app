@@ -9,7 +9,8 @@
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
-    export let activeActivity: Writable<{channel: string, message: string}>;
+    export let activeChannel: Writable<string>;
+    export let activeMessage: Writable<string>;
 
     let subscription: Unsubscriber;
     let activities: DataMessage[];
@@ -33,7 +34,7 @@
 <div>
     {#if activities !== undefined}
         {#each activities as activity (activity.id)}
-            <Activity activeActivity={activeActivity} dataManager={dataManager} networkManager={networkManager} activity={activity}></Activity>
+            <Activity networkManager={networkManager} activity={activity} activeChannel={activeChannel} activeMessage={activeMessage}></Activity>
         {/each}
     {/if}
 </div>

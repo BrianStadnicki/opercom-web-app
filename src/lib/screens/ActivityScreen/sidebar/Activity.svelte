@@ -2,25 +2,22 @@
     import type {DataMessage} from "../../../Types";
     import {NetworkManager} from "../../../NetworkManager";
     import moment from "moment";
-    import {DataManager} from "../../../DataManager";
     import type {Writable} from "svelte/store";
 
-    export let dataManager: DataManager;
     export let networkManager: NetworkManager;
     export let activity: DataMessage;
-    export let activeActivity: Writable<{channel: string, message: string}>;
+    export let activeChannel: Writable<string>;
+    export let activeMessage: Writable<string>;
 
     let active = false;
 
-    activeActivity.subscribe(current => {
-        active = current.message === activity.properties.activity.sourceMessageId;
+    activeMessage.subscribe(current => {
+        active = current === activity.properties.activity.sourceMessageId;
     });
 
     function clicked() {
-        activeActivity.set({
-            channel: activity.properties.activity.sourceThreadId,
-            message: activity.properties.activity.sourceMessageId
-        });
+        activeChannel.set(activity.properties.activity.sourceThreadId);
+        activeMessage.set(activity.properties.activity.sourceMessageId);
     }
 </script>
 
