@@ -98,6 +98,8 @@
 <style lang="scss">
     div {
         grid-column: 2 / 3;
+        display: flex;
+        flex-direction: column-reverse;
         overflow-y: auto;
         padding-bottom: 10px;
         scroll-behavior: smooth;
