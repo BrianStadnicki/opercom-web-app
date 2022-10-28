@@ -119,6 +119,7 @@
       padding: 5px;
       background-color: white;
       border-radius: 5px;
+      overflow-x: auto;
 
       .header {
 
@@ -158,7 +159,7 @@
       .content {
         margin: 5px;
         max-height: 20vh;
-        overflow: hidden;
+        overflow-y: hidden;
 
         .title {
           font-size: x-large;
