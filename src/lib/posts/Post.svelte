@@ -4,6 +4,8 @@
     import Content from "./Content.svelte";
     import moment from "moment";
     import {onMount} from "svelte";
+    import {NetworkManager} from "../NetworkManager";
+    import type {Writable} from "svelte/store";
 
     export let id: string;
     export let senderName: string;
@@ -14,7 +16,8 @@
     export let subject: string;
     export let files: DataFile[];
     export let comments: DataMessage[];
-    export let networkManager;
+    export let networkManager: NetworkManager;
+    export let activeMessage: Writable<string>;
 
     let content: HTMLDivElement;
     let showMoreBtn: boolean;
@@ -27,9 +30,21 @@
     function toggle() {
         showAll = !showAll;
     }
+
+    let postDiv: HTMLDivElement;
+
+    onMount(() => {
+        if (activeMessage !== undefined) {
+            activeMessage.subscribe(active => {
+                if (active === id && postDiv !== null) {
+                    postDiv.scrollIntoView(false);
+                }
+            });
+        }
+    });
 </script>
 
-<div class="post">
+<div bind:this={postDiv} class="post">
     {#await senderPhoto then photo}
         <img src={photo} width="48" height="48" class="profile-image" alt={senderName}>
     {/await}

@@ -89,9 +89,9 @@
     {#if posts !== undefined}
         {#each posts.slice(0, postsEnd) as post (post[post.length-1].id)}
             {#if post[post.length - 1].messagetype === "RichText/Html" || post[post.length - 1].messagetype === "Text"}
-                <RegularPost post={post} networkManager={networkManager}></RegularPost>
+                <RegularPost post={post} networkManager={networkManager} activeMessage={activeMessage}></RegularPost>
             {:else if post[post.length - 1].messagetype === "RichText/Media_Card"}
-                <AdaptiveCardPost post={post} networkManager={networkManager}></AdaptiveCardPost>
+                <AdaptiveCardPost post={post} networkManager={networkManager} activeMessage={activeMessage}></AdaptiveCardPost>
             {/if}
         {/each}
     {/if}
@@ -104,7 +104,6 @@
         flex-direction: column-reverse;
         overflow-y: auto;
         padding-bottom: 10px;
-        scroll-behavior: smooth;
         background-color: #ececec;
     }
 </style>

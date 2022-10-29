@@ -4,9 +4,11 @@
     import moment from "moment";
     import {NetworkManager} from "../NetworkManager";
     import Content from "./Content.svelte";
+    import type {Writable} from "svelte/store";
 
     export let post: DataMessage[];
     export let networkManager: NetworkManager;
+    export let activeMessage: Writable<string>;
 
     let parent = post[post.length - 1];
 </script>
@@ -23,6 +25,7 @@
     files={parent.properties.files === undefined ? undefined : JSON.parse(parent.properties.files)}
     comments={post.length > 1 ? post.slice(0, post.length - 1).reverse() : []}
     networkManager={networkManager}
+    activeMessage={activeMessage}
 >
     <Content content={parent.content} networkManager={networkManager}></Content>
 </Post>

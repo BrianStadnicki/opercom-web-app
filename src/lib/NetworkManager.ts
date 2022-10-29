@@ -196,7 +196,15 @@ export class NetworkManager {
             encodeURIComponent(thread)}/messages?view=msnp24Equivalent|supportsMessageProperties&pageSize=${messages}&startTime=${startTime}${
             syncState === undefined ? '' : `&syncState=${syncState}`}`)
 
-            .then(res => res.json());
+            .then(res => <DataChannel><unknown>res.json())
+            .then(res => {
+                res.messages.forEach(message => {
+                    if (message.properties.activity !== undefined) {
+                        message.properties.activity.sourceMessageId = String(message.properties.activity.sourceMessageId);
+                    }
+                })
+                return res;
+            });
     }
 
     async getApps(): Promise<DataApp[]> {

@@ -5,9 +5,11 @@
     import {NetworkManager} from "../NetworkManager";
     import {Action, AdaptiveCard, OpenUrlAction} from "adaptivecards";
     import {onMount} from "svelte";
+    import type {Writable} from "svelte/store";
 
     export let post: DataMessage[];
     export let networkManager: NetworkManager;
+    export let activeMessage: Writable<string>;
 
     let parent = post[post.length - 1];
 
@@ -41,6 +43,7 @@
         files={undefined}
         comments={post.length > 1 ? post.slice(0, post.length - 1).reverse() : []}
         networkManager={networkManager}
+        activeMessage={activeMessage}
 >
     <div bind:this={contentDiv}></div>
 </Post>
