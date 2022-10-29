@@ -5,7 +5,7 @@ Teams client, supporting reading chats and notifications.
 
 It does not support any kind of live updates.
 
-A dummy demo is available at [](https://brianstadnicki.github.io/opercom)
+A dummy demo is available [here](https://brianstadnicki.github.io/opercom)
 
 ![](readme/preview.png)
 
