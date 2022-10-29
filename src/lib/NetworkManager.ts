@@ -47,7 +47,7 @@ export class NetworkManager {
 
         let promiseFunction = (resolve, reject) => {
             if (this.networkUp) {
-                fetch(`http://localhost:8084/proxy${path}`, fetchOptions)
+                fetch(`http://localhost:7583/proxy${path}`, fetchOptions)
                     .then((response: Response) => {
                         console.log(response);
                         if (response.status === 401) {
@@ -59,7 +59,7 @@ export class NetworkManager {
                         resolve(response);
                     })
                     .catch((error) => {
-                        console.log(error, "http://localhost:8084/proxy", hostname, path, fetchOptions);
+                        console.log(error, "http://localhost:7583/proxy", hostname, path, fetchOptions);
                         if (this.networkUp) {
                             this.networkUp = false;
 

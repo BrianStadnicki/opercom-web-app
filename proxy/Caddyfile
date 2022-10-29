@@ -1,0 +1,44 @@
+:7583 {
+    handle /up {
+        respond "OK"
+    }
+
+    @proxyoptions {
+        method OPTIONS
+    }
+
+    @proxyrest {
+        method GET
+        method POST
+        method PUT
+        method PATCH
+    }
+
+    handle_path /proxy/* {
+        handle @proxyoptions {
+            header +Access-Control-Allow-Origin "http://localhost:5173"
+            header +Access-Control-Allow-Headers "*"
+        }
+
+        handle @proxyrest {
+            # rewrite * {header.opercom-path}
+
+            reverse_proxy {header.opercom-hostname} {
+                header_up origin {header.opercom-origin}
+                header_up host {header.opercom-host}
+                header_up referer {header.opercom-referer}
+                header_up cookie {header.opercom-cookie}
+
+                header_up -X-Forwarded-*
+                header_up -opercom-*
+
+                header_down Access-Control-Allow-Origin "http://localhost:5173"
+                header_down Access-Control-Allow-Headers "*"
+
+                transport http {
+                    tls
+                }
+            }
+        }
+    }
+}

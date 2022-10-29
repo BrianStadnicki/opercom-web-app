@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "proxy-linux": "./proxy/caddy_linux_amd64 run --config ./proxy/Caddyfile",
+    "proxy-windows": "proxy/caddy_windows_amd64.exe run --config ./proxy/Caddyfile"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.5.0",
