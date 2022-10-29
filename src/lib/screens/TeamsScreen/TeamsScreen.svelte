@@ -3,16 +3,11 @@
     import ChatBox from "./ChatBox.svelte";
     import {NetworkManager} from "../../NetworkManager";
     import {DataManager} from "../../DataManager";
-    import {onMount} from "svelte";
     import {writable} from "svelte/store";
 
     export let dataManager: DataManager;
     export let networkManager: NetworkManager;
     let activeChannel = writable("");
-
-    onMount(() => {
-        networkManager.getSocket();
-    });
 </script>
 
 <div>
